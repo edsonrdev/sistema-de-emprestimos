@@ -5,6 +5,8 @@ import cors from "cors";
 import connection from "./database/connection.js";
 
 // import the models and routes
+import User from "./models/User.js";
+
 import { routes } from "./routes.js";
 
 // init application
@@ -18,7 +20,8 @@ app.use(routes);
 
 // run the server and build the models, if a connection is OK
 connection
-  .sync()
+  .sync({ force: true })
+  // .sync()
   .then(() => {
     app.listen(PORT, () => {
       console.log(`Server started in port ${PORT}`);
