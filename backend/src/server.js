@@ -6,7 +6,7 @@ import connection from "./database/connection.js";
 
 // import the models and routes
 import User from "./models/User.js";
-
+import Client from "./models/Client.js";
 import { routes } from "./routes.js";
 
 // init application

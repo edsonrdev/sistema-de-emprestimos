@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon src/server.js -a localhost -p 3333",
+    "start": "nodemon src/server.js -a localhost -p 3333",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
