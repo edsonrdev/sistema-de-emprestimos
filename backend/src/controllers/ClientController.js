@@ -1,15 +1,22 @@
+import { where } from "sequelize";
 import connection from "../database/connection.js";
 import Client from "../models/Client.js";
 
 class ClientController {
-  // LISTA ALL CLIENTS
-  static async all(req, res) {
+  // LIST ALL CLIENTS
+  static async findAll(req, res) {
     const clients = await Client.findAll();
     return res.json({ status: "success", data: clients });
   }
 
+  // LIST ALL INACTIVE CLIENTS
+  static async findInactives(req, res) {
+    const inactiveClients = await Client.findAll({ where: { active: false } });
+    return res.json({ status: "success", data: inactiveClients });
+  }
+
   // LIST AN SPECIFIC CLIENT
-  static async find(req, res) {
+  static async findById(req, res) {
     const { id } = req.params;
 
     const client = await Client.findByPk(id);
@@ -42,11 +49,79 @@ class ClientController {
     if (!createdClient) {
       return res.status(500).json({
         status: "error",
-        message: `Error registering client!`,
+        message: "Error registering client!",
       });
     }
 
     return res.status(201).json({ status: "success", data: createdClient });
+  }
+
+  // UPDATE CLIENT
+  static async update(req, res) {
+    const { id, name, phone, address } = req.body;
+
+    if (!id || !name || !address) {
+      return res.status(422).json({
+        status: "error",
+        message: "ID, Name and Address are required!",
+      });
+    }
+
+    const foundedClient = await Client.findByPk(id);
+
+    if (!foundedClient) {
+      return res
+        .status(422)
+        .json({ status: "error", message: "Client not found!" });
+    }
+
+    const updatedClient = await foundedClient.update({
+      name,
+      phone,
+      address,
+    });
+
+    if (!updatedClient) {
+      return res.status(500).json({
+        status: "error",
+        message: "Error editing client!",
+      });
+    }
+
+    return res.status(201).json({ status: "success", data: updatedClient });
+  }
+
+  // INACTIVATE CLIENT
+  static async inactivate(req, res) {
+    const { id } = req.body;
+
+    if (!id) {
+      return res.status(422).json({
+        status: "error",
+        message: "ID is required!",
+      });
+    }
+
+    const foundedClient = await Client.findByPk(id);
+
+    if (!foundedClient) {
+      return res
+        .status(422)
+        .json({ status: "error", message: "Client not found!" });
+    }
+
+    const inactiveClient = await foundedClient.update({
+      active: !foundedClient.active,
+    });
+
+    if (!inactiveClient) {
+      return res.status(500).json({
+        status: "error",
+        message: "Error deactivating client!",
+      });
+    }
+
+    return res.status(201).json({ status: "success", data: inactiveClient });
   }
 }
 

@@ -4,9 +4,12 @@ import cors from "cors";
 // import database connection
 import connection from "./database/connection.js";
 
-// import the models and routes
+// import the models
 import User from "./models/User.js";
 import Client from "./models/Client.js";
+import Loan from "./models/Loan.js";
+
+// import routes
 import { routes } from "./routes.js";
 
 // init application

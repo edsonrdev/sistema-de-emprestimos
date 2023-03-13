@@ -5,7 +5,7 @@ import createUserToken from "../helpers/createUserToken.js";
 
 class UserController {
   // LIST ALL USERS
-  static async all(req, res) {
+  static async findAll(req, res) {
     const users = await User.findAll();
     return res.json({ status: "success", data: users });
   }

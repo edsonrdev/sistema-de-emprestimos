@@ -9,6 +9,7 @@ const Client = connection.define("client", {
   },
   phone: {
     type: DataTypes.STRING,
+    defaultValue: "",
   },
   address: {
     type: DataTypes.STRING,
