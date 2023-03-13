@@ -28,17 +28,7 @@ export const Dashboard = () => {
     .map((loan) => loan[0].paid)
     .reduce((acc, loan) => acc + loan, 0);
 
-  // console.log(receivedTotal);
-
-  const remainderTotal = clients
-    .filter((client) => client.loans.length)
-    .map((client) => client.loans)
-    .map((loan) => loan[0].remainder)
-    .reduce((acc, loan) => acc + loan, 0);
-
-  const inactiveClients = clients.filter(
-    (client) => client.active === false
-  ).length;
+  const remainderTotal = borrowedTotal - receivedTotal;
 
   const getClients = async () => {
     const res = await api.get("/clients");
@@ -63,45 +53,25 @@ export const Dashboard = () => {
               <img src={BorrowedIcon} alt="Emprestado (total)" />
               <span className="price">{convertToRealBR(borrowedTotal)}</span>
             </div>
+
             <div className="card">
               <span className="title">Recebido (total)</span>
               <img src={ReceivedIcon} alt="Recebido (total)" />
               <span className="price">{convertToRealBR(receivedTotal)}</span>
             </div>
+
             <div className="card">
               <span className="title">A receber (total)</span>
               <img src={ToReceiveIcon} alt="A receber (total)" />
               <span className="price">{convertToRealBR(remainderTotal)}</span>
             </div>
+
             <div className="card">
               <span className="title">Clientes (total)</span>
               <img src={CustomerIcon} alt="Clientes (ativos)" />
               <span className="price">{clients.length}</span>
             </div>
-
-            <div className="card">
-              <span className="title">Emprestado (mês)</span>
-              <img src={BorrowedIcon} alt="Emprestado (mês)" />
-              <span className="price">0</span>
-            </div>
-            <div className="card">
-              <span className="title">Recebido (mês)</span>
-              <img src={ReceivedIcon} alt="Recebido (mês)" />
-              <span className="price">0</span>
-            </div>
-            <div className="card">
-              <span className="title">A receber (mês)</span>
-              <img src={ToReceiveIcon} alt="A receber (mês)" />
-              <span className="price">0</span>
-            </div>
-            <div className="card">
-              <span className="title">Clientes (inativos)</span>
-              <img src={CustomerIcon} alt="Clientes (inativos)" />
-              <span className="price">{inactiveClients}</span>
-            </div>
           </div>
-
-          <h2>Emprestado x Recebido x A receber (ano atual)</h2>
         </div>
       </main>
     </Container>

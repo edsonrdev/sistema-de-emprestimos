@@ -84,11 +84,11 @@ class UserController {
       }
     );
 
-    if (!updatedUser[0]) {
+    if (!updatedUser) {
       res.json({ message: "Error updating user data!" });
     }
 
-    res.json(updatedUser[0]);
+    res.json(updatedUser);
   }
 }
 
