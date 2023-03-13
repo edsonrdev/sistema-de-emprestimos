@@ -22,5 +22,6 @@ routes.patch("/clients/inactivate", ClientController.inactivate);
 // loan routes
 routes.get("/loans", LoanController.findAll);
 routes.post("/loans", LoanController.create);
+routes.patch("/loans/changeTotal", LoanController.changeTotal);
 
 export { routes };

@@ -59,6 +59,43 @@ class LoanController {
       data: createdLoan,
     });
   }
+
+  // CHANGE TOTAL LOAN AMOUNT
+  static async changeTotal(req, res) {
+    const { id, amount } = req.body;
+
+    if (!id || !amount) {
+      return res
+        .status(422)
+        .json({ status: "error", message: "All fields are required!" });
+    }
+
+    const loanFounded = await Loan.findByPk(id);
+
+    if (!loanFounded) {
+      return res
+        .status(422)
+        .json({ status: "error", message: "Loan not found!" });
+    }
+
+    const increasedLoanTotal = await loanFounded.update({
+      // type = 1 => decrease total amount
+      // type = 0 => increase total amount
+      total: type ? loanFounded.total + amount : loanFounded.total - amount,
+    });
+
+    if (!increasedLoanTotal) {
+      return res.status(422).json({
+        status: "error",
+        message: "Error when changing loan total!",
+      });
+    }
+
+    return res.json({
+      status: "success",
+      data: increasedLoanTotal,
+    });
+  }
 }
 
 export default LoanController;
