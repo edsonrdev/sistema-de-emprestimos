@@ -23,8 +23,8 @@ app.use(routes);
 
 // run the server and build the models, if a connection is OK
 connection
-  // .sync({ force: true })
-  .sync()
+  .sync({ force: true })
+  // .sync()
   .then(() => {
     app.listen(PORT, () => {
       console.log(`Server started in port ${PORT}`);

@@ -10,14 +10,11 @@ const createUserToken = async (user, req, res) => {
   );
 
   return res.status(200).json({
-    status: "success",
-    data: {
-      user: {
-        id: user.id,
-        name: user.name,
-      },
-      token: token,
+    user: {
+      id: user.id,
+      name: user.name,
     },
+    token: token,
   });
 };
 

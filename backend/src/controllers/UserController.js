@@ -7,7 +7,7 @@ class UserController {
   // LIST ALL USERS
   static async findAll(req, res) {
     const users = await User.findAll();
-    return res.json({ status: "success", data: users });
+    return res.json(users);
   }
 
   // CREATE A NEW USER
@@ -15,29 +15,21 @@ class UserController {
     const { name, email, password, passwordConfirm } = req.body;
 
     if (!name || !email || !password || !passwordConfirm) {
-      return res
-        .status(422)
-        .json({ status: "error", message: "All fields are required!!" });
+      return res.status(422).json({ message: "All fields are required!" });
     }
 
     if (!/^[\w+.]+@\w+\.\w{2,}(?:\.\w{2})?$/.test(email)) {
-      return res
-        .status(422)
-        .json({ status: "error", message: "Email is invalid!" });
+      return res.status(422).json({ message: "Email is invalid!" });
     }
 
     const emailAlreadyExists = await User.findOne({ where: { email: email } });
 
     if (emailAlreadyExists) {
-      return res
-        .status(422)
-        .json({ status: "error", message: "E-mail already registered!" });
+      return res.status(422).json({ message: "E-mail already registered!" });
     }
 
     if (password !== passwordConfirm) {
-      return res
-        .status(422)
-        .json({ status: "error", message: "Passwords do not match!" });
+      return res.status(422).json({ message: "Passwords do not match!" });
     }
 
     const salt = await bcrypt.genSalt(12);
@@ -49,34 +41,27 @@ class UserController {
       password: passwordHash,
     });
 
-    return res.json({ status: "success", data: user });
+    return res.json(user);
   }
 
   // MAKE LOGIN USER
   static async login(req, res) {
-    // return res.json({ message: "Login User" });
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res
-        .status(422)
-        .json({ status: "error", message: "All fields are required!!" });
+      return res.status(422).json({ message: "All fields are required!" });
     }
 
     const user = await User.findOne({ where: { email: email } });
 
     if (!user) {
-      return res
-        .status(422)
-        .json({ status: "error", message: "User not found!" });
+      return res.status(422).json({ message: "User not found!" });
     }
 
     const checkPassword = await bcrypt.compare(password, user?.password);
 
     if (!checkPassword) {
-      return res
-        .status(422)
-        .json({ status: "error", message: "The password is incorrect!" });
+      return res.status(422).json({ message: "The password is incorrect!" });
     }
 
     await createUserToken(user, req, res);
@@ -87,9 +72,7 @@ class UserController {
     const { id, name, photo } = req.body;
 
     if (!id || !name) {
-      return res
-        .status(422)
-        .json({ status: "error", message: "All fields are required!" });
+      return res.status(422).json({ message: "All fields are required!" });
     }
 
     const updatedUser = await User.update(
@@ -102,10 +85,10 @@ class UserController {
     );
 
     if (!updatedUser[0]) {
-      res.json({ status: "error", message: "Error updating user data!" });
+      res.json({ message: "Error updating user data!" });
     }
 
-    res.json({ status: "success", message: "User data successfully updated!" });
+    res.json(updatedUser[0]);
   }
 }
 

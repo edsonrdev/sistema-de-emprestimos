@@ -6,7 +6,7 @@ class LoanController {
   // LIST ALL LOANS
   static async findAll(req, res) {
     const loans = await Loan.findAll();
-    return res.json({ status: "success", data: loans });
+    return res.json(loans);
   }
 
   // CREATE A NEW LOAN
@@ -54,15 +54,12 @@ class LoanController {
       });
     }
 
-    return res.json({
-      status: "success",
-      data: createdLoan,
-    });
+    return res.json(createdLoan);
   }
 
-  // CHANGE TOTAL LOAN AMOUNT
+  // CHANGE TOTAL LOAN
   static async changeTotal(req, res) {
-    const { id, amount } = req.body;
+    const { id, amount, type } = req.body;
 
     if (!id || !amount) {
       return res
@@ -78,23 +75,24 @@ class LoanController {
         .json({ status: "error", message: "Loan not found!" });
     }
 
-    const increasedLoanTotal = await loanFounded.update({
+    const changedLoanTotal = await loanFounded.update({
       // type = 1 => decrease total amount
       // type = 0 => increase total amount
       total: type ? loanFounded.total + amount : loanFounded.total - amount,
+      remainder: type
+        ? loanFounded.remainder + amount
+        : loanFounded.remainder - amount,
+      paid: type ? loanFounded.paid : loanFounded.paid + amount,
     });
 
-    if (!increasedLoanTotal) {
+    if (!changedLoanTotal) {
       return res.status(422).json({
         status: "error",
         message: "Error when changing loan total!",
       });
     }
 
-    return res.json({
-      status: "success",
-      data: increasedLoanTotal,
-    });
+    return res.json(changedLoanTotal);
   }
 }
 

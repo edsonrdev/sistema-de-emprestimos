@@ -9,7 +9,7 @@ class ClientController {
     const clients = await Client.findAll({
       include: Loan,
     });
-    return res.json({ status: "success", data: clients });
+    return res.json(clients);
   }
 
   // LIST ALL INACTIVE CLIENTS
@@ -18,7 +18,7 @@ class ClientController {
       where: { active: false },
       include: Loan,
     });
-    return res.json({ status: "success", data: inactiveClients });
+    return res.json(inactiveClients);
   }
 
   // LIST AN SPECIFIC CLIENT
@@ -35,7 +35,7 @@ class ClientController {
         .json({ status: "error", message: "Client not found!" });
     }
 
-    return res.json({ status: "success", data: client });
+    return res.json(client);
   }
 
   // CREATE A NEW CLIENT
@@ -61,7 +61,7 @@ class ClientController {
       });
     }
 
-    return res.status(201).json({ status: "success", data: createdClient });
+    return res.status(201).json(createdClient);
   }
 
   // UPDATE CLIENT
@@ -96,7 +96,7 @@ class ClientController {
       });
     }
 
-    return res.status(201).json({ status: "success", data: updatedClient });
+    return res.status(201).json(updatedClient);
   }
 
   // INACTIVATE CLIENT
@@ -129,7 +129,7 @@ class ClientController {
       });
     }
 
-    return res.status(201).json({ status: "success", data: inactiveClient });
+    return res.status(201).json(inactiveClient);
   }
 }
 
