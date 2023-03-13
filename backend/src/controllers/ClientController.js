@@ -1,17 +1,23 @@
 import { where } from "sequelize";
 import connection from "../database/connection.js";
 import Client from "../models/Client.js";
+import Loan from "../models/Loan.js";
 
 class ClientController {
   // LIST ALL CLIENTS
   static async findAll(req, res) {
-    const clients = await Client.findAll();
+    const clients = await Client.findAll({
+      include: Loan,
+    });
     return res.json({ status: "success", data: clients });
   }
 
   // LIST ALL INACTIVE CLIENTS
   static async findInactives(req, res) {
-    const inactiveClients = await Client.findAll({ where: { active: false } });
+    const inactiveClients = await Client.findAll({
+      where: { active: false },
+      include: Loan,
+    });
     return res.json({ status: "success", data: inactiveClients });
   }
 
@@ -19,7 +25,9 @@ class ClientController {
   static async findById(req, res) {
     const { id } = req.params;
 
-    const client = await Client.findByPk(id);
+    const client = await Client.findByPk(id, {
+      include: Loan,
+    });
 
     if (!client) {
       return res
