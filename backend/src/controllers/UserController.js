@@ -4,15 +4,13 @@ import bcrypt from "bcrypt";
 import createUserToken from "../helpers/createUserToken.js";
 
 class UserController {
-  static welcome(req, res) {
-    return res.json({ message: "Welcome To Users API!!!" });
-  }
-
+  // LIST ALL USERS
   static async all(req, res) {
     const users = await User.findAll();
     return res.json({ status: "success", data: users });
   }
 
+  // CREATE A NEW USER
   static async create(req, res) {
     const { name, email, password, passwordConfirm } = req.body;
 
@@ -54,6 +52,7 @@ class UserController {
     return res.json({ status: "success", data: user });
   }
 
+  // MAKE LOGIN USER
   static async login(req, res) {
     // return res.json({ message: "Login User" });
     const { email, password } = req.body;
@@ -83,6 +82,7 @@ class UserController {
     await createUserToken(user, req, res);
   }
 
+  // UPDATE A USER (NAME AND PHOTO)
   static async update(req, res) {
     const { id, name, photo } = req.body;
 
