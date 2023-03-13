@@ -1,5 +1,6 @@
 import express from "express";
 import UserController from "./controllers/UserController.js";
+import ClientController from "./controllers/ClientController.js";
 
 const routes = express.Router();
 
@@ -12,7 +13,7 @@ routes.put("/users", UserController.update);
 
 // client routes
 routes.get("/clients", ClientController.all);
+routes.get("/clients/:id", ClientController.find);
 routes.post("/clients", ClientController.create);
-routes.post("/clients/:id", ClientController.find);
 
 export { routes };
