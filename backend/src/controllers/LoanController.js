@@ -55,13 +55,9 @@ class LoanController {
     }
 
     return res.json({
-      createdLoan,
+      status: "success",
+      data: createdLoan,
     });
-
-    // return res.json({
-    //   status: "success",
-    //   message: "Loan successfully contracted!",
-    // });
   }
 }
 
