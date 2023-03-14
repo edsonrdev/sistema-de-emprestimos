@@ -27,11 +27,11 @@ export const Routes = () => (
         <Dashboard />
       </Route>
 
-      <Route exact path="/customers">
+      <Route exact path="/clients">
         <Customers />
       </Route>
 
-      <Route path="/customer/:id">
+      <Route path="/clients/:id">
         <CustomerDetails />
       </Route>
 

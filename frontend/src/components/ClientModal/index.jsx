@@ -23,8 +23,6 @@ export const ClientModal = ({
   handleCloseModal,
   currentCustomer = {},
 }) => {
-  const [isAlreadyLoan, setIsAlreadyLoan] = useState(false);
-
   const schema = yup.object().shape({
     ...((modalType === "default" || modalType === "edit") && {
       name: yup

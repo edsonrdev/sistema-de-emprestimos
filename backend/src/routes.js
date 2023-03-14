@@ -13,6 +13,7 @@ routes.put("/users", UserController.update);
 
 // client routes
 routes.get("/clients", ClientController.findAll);
+routes.get("/clients/actives", ClientController.findActives);
 routes.get("/clients/inactives", ClientController.findInactives);
 routes.get("/clients/:id", ClientController.findById);
 routes.post("/clients", ClientController.create);

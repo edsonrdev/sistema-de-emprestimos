@@ -5,7 +5,7 @@ import { api } from "../../services";
 import { Header } from "../../components/Header";
 import { convertToRealBR } from "../../helpers/convertToRealBR";
 import { Button } from "../../components/Button";
-import { Modal } from "../../components/Modal";
+import { LoanModal } from "../../components/LoanModal";
 
 export const CustomerDetails = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -17,14 +17,14 @@ export const CustomerDetails = () => {
 
   useEffect(() => {
     const getCustomer = async () => {
-      const res = await api.get(`/customers/${id}`);
+      const res = await api.get(`/clients/${id}`);
       setCustomer(res.data);
     };
 
     getCustomer();
   }, [id]);
 
-  // console.log(customer);
+  // console.log(customer.loans);
 
   const handleCloseModal = () => {
     setCurrentCustomer({});
@@ -51,15 +51,15 @@ export const CustomerDetails = () => {
               text="Voltar"
               type="button"
               typeUIButton="default"
-              onClick={() => history.push("/customers")}
+              onClick={() => history.push("/clients")}
             />
           </div>
 
-          {customer.Loans?.length === 0 ? (
+          {!customer.loans?.length ? (
             <div className="hire-loan">
               <p>O cliente ainda não tem empréstimos contraídos.</p>
               <Button
-                text="Contrair empréstimo"
+                text="Contratar empréstimo"
                 type="button"
                 typeUIButton="default"
                 onClick={() => handleOpenModal("default", customer)}
@@ -69,45 +69,35 @@ export const CustomerDetails = () => {
             <div className="loan-input-values">
               <h3>
                 Valor da parcela:{" "}
-                <span>{convertToRealBR(customer.Loans?.[0].portion)}</span>
+                <span>{convertToRealBR(customer.loans?.[0].portion)}</span>
               </h3>
 
-              <div className="discounted-value">
-                <input
-                  type="number"
-                  min={1}
-                  step={0.01}
-                  placeholder="Valor a ser abatido"
-                />
+              <form className="form-change-total">
                 <Button
                   text="Abater valor"
                   type="button"
                   typeUIButton="default"
                 />
-              </div>
-
-              <div className="additional-value">
                 <input
                   type="number"
                   min={1}
                   step={0.01}
-                  placeholder="Contratar valor adicional"
+                  placeholder="Valor desejado"
                 />
                 <Button
                   text="Contratar valor"
                   type="button"
                   typeUIButton="default"
                 />
-              </div>
+              </form>
             </div>
           )}
         </div>
       </main>
 
       {openModal && (
-        <Modal
+        <LoanModal
           modalType="default"
-          entity="loans"
           handleCloseModal={handleCloseModal}
           currentCustomer={currentCustomer}
         />

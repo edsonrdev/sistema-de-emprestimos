@@ -26,7 +26,7 @@ export const Customers = () => {
 
   const getCustomers = async () => {
     const res = disabled
-      ? await api.get("/clients")
+      ? await api.get("/clients/actives")
       : await api.get("/clients/inactives");
 
     let customers = res.data;
@@ -120,7 +120,7 @@ export const Customers = () => {
                   <td>
                     {customer.active ? (
                       <Link
-                        to={customer.active ? `/customer/${customer.id}` : ""}
+                        to={customer.active ? `/clients/${customer.id}` : ""}
                       >
                         {customer.name}
                       </Link>

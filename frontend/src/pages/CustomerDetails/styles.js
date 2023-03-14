@@ -82,21 +82,26 @@ export const Container = styled.div`
       align-items: center;
       justify-content: space-between;
 
-      > div {
+      .form-change-total {
         display: flex;
 
-        button {
+        button:nth-of-type(1) {
+          border-radius: 5px 0 0 5px;
+          border-left-color: transparent;
+        }
+        button:nth-of-type(2) {
           border-radius: 0 5px 5px 0;
           border-left-color: transparent;
         }
 
         input {
-          min-width: 226px;
+          min-width: 100px;
           padding: 0 12px;
 
           outline: 0;
-          border-radius: 5px 0 0 5px;
-          border: 1px solid var(--gray-medium);
+          border-radius: 0;
+          border: 2px solid var(--gray-medium);
+          border-left-color: transparent;
           border-right-color: transparent;
         }
       }

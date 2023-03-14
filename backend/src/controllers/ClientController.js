@@ -7,6 +7,14 @@ class ClientController {
   // LIST ALL CLIENTS
   static async findAll(req, res) {
     const clients = await Client.findAll({
+      include: Loan,
+    });
+    return res.json(clients);
+  }
+
+  // LIST ALL ACTIVE CLIENTS
+  static async findActives(req, res) {
+    const clients = await Client.findAll({
       where: { active: true },
       include: Loan,
     });

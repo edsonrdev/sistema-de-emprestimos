@@ -17,7 +17,7 @@ export const Header = ({ active }) => {
           </li>
           <li>
             <Link
-              to="/customers"
+              to="/clients"
               className={active === "customers" ? "active" : undefined}
             >
               Clientes
