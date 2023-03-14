@@ -8,6 +8,7 @@ import connection from "./database/connection.js";
 import User from "./models/User.js";
 import Client from "./models/Client.js";
 import Loan from "./models/Loan.js";
+import Movement from "./models/Movement.js";
 
 // import routes
 import { routes } from "./routes.js";

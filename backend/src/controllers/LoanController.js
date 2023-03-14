@@ -56,44 +56,6 @@ class LoanController {
 
     return res.json(createdLoan);
   }
-
-  // CHANGE TOTAL LOAN
-  static async changeTotal(req, res) {
-    const { id, amount, type } = req.body;
-
-    if (!id || !amount) {
-      return res
-        .status(422)
-        .json({ status: "error", message: "All fields are required!" });
-    }
-
-    const loanFounded = await Loan.findByPk(id);
-
-    if (!loanFounded) {
-      return res
-        .status(422)
-        .json({ status: "error", message: "Loan not found!" });
-    }
-
-    const changedLoanTotal = await loanFounded.update({
-      // type = 1 => decrease total amount
-      // type = 0 => increase total amount
-      total: type ? loanFounded.total + amount : loanFounded.total - amount,
-      remainder: type
-        ? loanFounded.remainder + amount
-        : loanFounded.remainder - amount,
-      paid: type ? loanFounded.paid : loanFounded.paid + amount,
-    });
-
-    if (!changedLoanTotal) {
-      return res.status(422).json({
-        status: "error",
-        message: "Error when changing loan total!",
-      });
-    }
-
-    return res.json(changedLoanTotal);
-  }
 }
 
 export default LoanController;

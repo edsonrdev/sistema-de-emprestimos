@@ -38,6 +38,10 @@ export const CustomerDetails = () => {
     setOpenModal(true);
   };
 
+  const handleInputAmount = () => {};
+
+  const handleOutputAmount = () => {};
+
   return (
     <Container>
       <Header active="customerDetails" />
@@ -74,6 +78,7 @@ export const CustomerDetails = () => {
 
               <form className="form-change-total">
                 <Button
+                  onClick={handleInputAmount}
                   text="Abater valor"
                   type="button"
                   typeUIButton="default"
@@ -85,6 +90,7 @@ export const CustomerDetails = () => {
                   placeholder="Valor desejado"
                 />
                 <Button
+                  onClick={handleOutputAmount}
                   text="Contratar valor"
                   type="button"
                   typeUIButton="default"
