@@ -27,6 +27,7 @@ routes.post("/loans", LoanController.create);
 
 // movement routes
 routes.get("/movements", MovementController.findAll);
+routes.get("/movements/loan/:id", MovementController.findByLoan);
 routes.post("/movements", MovementController.create);
 
 export { routes };

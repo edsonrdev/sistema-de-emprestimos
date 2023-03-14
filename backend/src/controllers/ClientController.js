@@ -2,6 +2,7 @@ import { where } from "sequelize";
 import connection from "../database/connection.js";
 import Client from "../models/Client.js";
 import Loan from "../models/Loan.js";
+import Movement from "../models/Movement.js";
 
 class ClientController {
   // LIST ALL CLIENTS

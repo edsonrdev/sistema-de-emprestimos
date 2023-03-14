@@ -6,25 +6,34 @@ import { Header } from "../../components/Header";
 import { convertToRealBR } from "../../helpers/convertToRealBR";
 import { Button } from "../../components/Button";
 import { LoanModal } from "../../components/LoanModal";
+import { toast } from "react-toastify";
 
 export const CustomerDetails = () => {
   const [openModal, setOpenModal] = useState(false);
   const [customer, setCustomer] = useState({});
   const [currentCustomer, setCurrentCustomer] = useState({});
   const [modalType, setModalType] = useState("");
+  const [desiredAmount, setDesiredAmount] = useState("");
   const { id } = useParams();
   const history = useHistory();
 
-  useEffect(() => {
-    const getCustomer = async () => {
-      const res = await api.get(`/clients/${id}`);
-      setCustomer(res.data);
-    };
+  // console.log(desiredAmount);
+  const getCustomer = async () => {
+    const res = await api.get(`/clients/${id}`);
+    setCustomer(res.data);
+  };
 
+  useEffect(() => {
     getCustomer();
   }, [id]);
 
-  // console.log(customer.loans);
+  useEffect(() => {
+    getCustomer();
+  }, [customer]);
+
+  // useEffect(() => {
+  // getCustomer();
+  // }, [customer]);
 
   const handleCloseModal = () => {
     setCurrentCustomer({});
@@ -38,9 +47,39 @@ export const CustomerDetails = () => {
     setOpenModal(true);
   };
 
-  const handleInputAmount = () => {};
+  const handleInputAmount = async () => {
+    const data = {
+      loanId: customer.id,
+      amount: Number(desiredAmount),
+      type: "input",
+    };
 
-  const handleOutputAmount = () => {};
+    // console.log(data);
+
+    try {
+      await api.post("/movements", data);
+      toast.success("Valor abatido com sucesso!");
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
+
+  const handleOutputAmount = async () => {
+    const data = {
+      loanId: customer.id,
+      amount: Number(desiredAmount),
+      type: "output",
+    };
+
+    // console.log(data);
+
+    try {
+      await api.post("/movements", data);
+      toast.success("Valor contratado com sucesso!");
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
 
   return (
     <Container>
@@ -61,7 +100,7 @@ export const CustomerDetails = () => {
 
           {!customer.loans?.length ? (
             <div className="hire-loan">
-              <p>O cliente ainda não tem empréstimos contraídos.</p>
+              <p>O cliente ainda não tem empréstimos contratados.</p>
               <Button
                 text="Contratar empréstimo"
                 type="button"
@@ -88,6 +127,8 @@ export const CustomerDetails = () => {
                   min={1}
                   step={0.01}
                   placeholder="Valor desejado"
+                  value={desiredAmount}
+                  onChange={(e) => setDesiredAmount(e.target.value)}
                 />
                 <Button
                   onClick={handleOutputAmount}

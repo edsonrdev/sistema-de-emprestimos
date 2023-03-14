@@ -1,11 +1,14 @@
 import connection from "../database/connection.js";
 import Client from "../models/Client.js";
 import Loan from "../models/Loan.js";
+import Movement from "../models/Movement.js";
 
 class LoanController {
   // LIST ALL LOANS
   static async findAll(req, res) {
-    const loans = await Loan.findAll();
+    const loans = await Loan.findAll({
+      include: Movement,
+    });
     return res.json(loans);
   }
 

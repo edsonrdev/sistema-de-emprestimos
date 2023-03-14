@@ -9,6 +9,21 @@ class MovementController {
     return res.json(movements);
   }
 
+  // LIST ALL MOVEMENTS BY LOAN
+  static async findByLoan(req, res) {
+    const { id } = req.params;
+
+    const loan = await Loan.findByPk(id, { include: Movement });
+
+    if (!loan) {
+      return res.status(422).json({ message: "Empréstimo não encontrado!" });
+    }
+
+    console.log(loan);
+
+    // const movementsInLoan = loan.map
+  }
+
   // CREATE A NEW MOVEMENT
   static async create(req, res) {
     const { loanId, amount, type } = req.body;
