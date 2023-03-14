@@ -16,8 +16,8 @@ routes.get("/clients", ClientController.findAll);
 routes.get("/clients/inactives", ClientController.findInactives);
 routes.get("/clients/:id", ClientController.findById);
 routes.post("/clients", ClientController.create);
-routes.put("/clients", ClientController.update);
-routes.patch("/clients/inactivate", ClientController.inactivate);
+routes.put("/clients/:id", ClientController.update);
+routes.patch("/clients/inactivate/:id", ClientController.inactivate);
 
 // loan routes
 routes.get("/loans", LoanController.findAll);

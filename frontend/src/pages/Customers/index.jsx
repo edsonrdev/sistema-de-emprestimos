@@ -9,7 +9,7 @@ import EditIcon from "../../assets/EditIcon.svg";
 import InactivateIcon from "../../assets/InactivateIcon.svg";
 
 import { Header } from "../../components/Header";
-import { Modal } from "../../components/Modal";
+import { ClientModal } from "../../components/ClientModal";
 import { Button } from "../../components/Button";
 
 export const Customers = () => {
@@ -26,8 +26,8 @@ export const Customers = () => {
 
   const getCustomers = async () => {
     const res = disabled
-      ? await api.get("/customers")
-      : await api.get("/customers/disableds");
+      ? await api.get("/clients")
+      : await api.get("/clients/inactives");
 
     let customers = res.data;
 
@@ -107,8 +107,7 @@ export const Customers = () => {
           <table className="customers-table">
             <thead>
               <tr>
-                <th>Cliente</th>
-                <th>CPF</th>
+                <th>Nome</th>
                 <th>Telefone</th>
                 <th>Endereço</th>
                 <th>Opções</th>
@@ -129,7 +128,6 @@ export const Customers = () => {
                       <>{customer.name}</>
                     )}
                   </td>
-                  <td>{customer.cpf ? customer.cpf : "..."}</td>
                   <td>{customer.phone ? customer.phone : "..."}</td>
                   <td>{customer.address}</td>
                   <td className="options">
@@ -157,9 +155,8 @@ export const Customers = () => {
       </main>
 
       {openModal && (
-        <Modal
+        <ClientModal
           modalType={modalType}
-          entity="customers"
           handleCloseModal={handleCloseModal}
           currentCustomer={currentCustomer}
         />

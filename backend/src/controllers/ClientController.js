@@ -7,6 +7,7 @@ class ClientController {
   // LIST ALL CLIENTS
   static async findAll(req, res) {
     const clients = await Client.findAll({
+      where: { active: true },
       include: Loan,
     });
     return res.json(clients);
@@ -66,7 +67,8 @@ class ClientController {
 
   // UPDATE CLIENT
   static async update(req, res) {
-    const { id, name, phone, address } = req.body;
+    const { id } = req.params;
+    const { name, phone, address } = req.body;
 
     if (!id || !name || !address) {
       return res.status(422).json({
@@ -101,7 +103,7 @@ class ClientController {
 
   // INACTIVATE CLIENT
   static async inactivate(req, res) {
-    const { id } = req.body;
+    const { id } = req.params;
 
     if (!id) {
       return res.status(422).json({

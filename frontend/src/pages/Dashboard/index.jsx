@@ -67,7 +67,7 @@ export const Dashboard = () => {
             </div>
 
             <div className="card">
-              <span className="title">Clientes (total)</span>
+              <span className="title">Clientes (ativos)</span>
               <img src={CustomerIcon} alt="Clientes (ativos)" />
               <span className="price">{clients.length}</span>
             </div>
