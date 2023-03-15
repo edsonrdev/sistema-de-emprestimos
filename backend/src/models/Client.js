@@ -20,6 +20,30 @@ const Client = connection.define("client", {
     type: DataTypes.BOOLEAN,
     defaultValue: true,
   },
+
+  // attributes of the loan
+  total: {
+    type: DataTypes.FLOAT,
+    defaultValue: 0,
+  },
+  portion: {
+    type: DataTypes.FLOAT,
+    defaultValue: 0,
+  },
+  paid: {
+    type: DataTypes.FLOAT,
+    defaultValue: 0,
+  },
+  remainder: {
+    type: DataTypes.VIRTUAL,
+    defaultValue: 0,
+    get() {
+      if (this.getDataValue("paid")) {
+        return this.getDataValue("total") - this.getDataValue("paid");
+      }
+      return this.getDataValue("total");
+    },
+  },
 });
 
 export default Client;

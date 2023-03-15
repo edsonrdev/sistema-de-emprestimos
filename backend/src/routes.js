@@ -21,6 +21,8 @@ routes.post("/clients", ClientController.create);
 routes.put("/clients/:id", ClientController.update);
 routes.patch("/clients/inactivate/:id", ClientController.inactivate);
 
+routes.post("/clients/loan", ClientController.createLoan);
+
 // loan routes
 routes.get("/loans", LoanController.findAll);
 routes.post("/loans", LoanController.create);

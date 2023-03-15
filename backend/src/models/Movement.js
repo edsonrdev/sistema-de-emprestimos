@@ -1,6 +1,6 @@
 import { DataTypes } from "sequelize";
 import connection from "../database/connection.js";
-import Loan from "./Loan.js";
+import Client from "./Client.js";
 
 const Movement = connection.define("movement", {
   type: {
@@ -15,7 +15,7 @@ const Movement = connection.define("movement", {
   },
 });
 
-Loan.hasMany(Movement);
-Movement.belongsTo(Loan);
+Client.hasMany(Movement);
+Movement.belongsTo(Client);
 
 export default Movement;

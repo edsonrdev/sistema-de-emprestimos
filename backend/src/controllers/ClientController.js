@@ -8,7 +8,7 @@ class ClientController {
   // LIST ALL CLIENTS
   static async findAll(req, res) {
     const clients = await Client.findAll({
-      include: { model: Loan, include: [Movement] },
+      include: Movement,
     });
     return res.json(clients);
   }
@@ -17,7 +17,7 @@ class ClientController {
   static async findActives(req, res) {
     const clients = await Client.findAll({
       where: { active: true },
-      include: Loan,
+      include: Movement,
     });
     return res.json(clients);
   }
@@ -26,7 +26,7 @@ class ClientController {
   static async findInactives(req, res) {
     const inactiveClients = await Client.findAll({
       where: { active: false },
-      include: Loan,
+      include: Movement,
     });
     return res.json(inactiveClients);
   }
@@ -36,13 +36,11 @@ class ClientController {
     const { id } = req.params;
 
     const client = await Client.findByPk(id, {
-      include: { model: Loan, include: [Movement] },
+      include: { model: Movement },
     });
 
     if (!client) {
-      return res
-        .status(422)
-        .json({ status: "error", message: "Client not found!" });
+      return res.status(422).json({ message: "Cliente não encontrado!" });
     }
 
     return res.json(client);
@@ -53,9 +51,9 @@ class ClientController {
     const { name, phone, address } = req.body;
 
     if (!name || !address) {
-      return res
-        .status(422)
-        .json({ status: "error", message: "Name and Address are required!" });
+      return res.status(422).json({
+        message: "Nome e Endereço são obrigatórios!",
+      });
     }
 
     const createdClient = await Client.create({
@@ -66,8 +64,7 @@ class ClientController {
 
     if (!createdClient) {
       return res.status(500).json({
-        status: "error",
-        message: "Error registering client!",
+        message: "Erro salvar o cliente!",
       });
     }
 
@@ -81,17 +78,14 @@ class ClientController {
 
     if (!id || !name || !address) {
       return res.status(422).json({
-        status: "error",
-        message: "ID, Name and Address are required!",
+        message: "ID, Nome e Endereço são obrigatórios!",
       });
     }
 
     const foundedClient = await Client.findByPk(id);
 
     if (!foundedClient) {
-      return res
-        .status(422)
-        .json({ status: "error", message: "Client not found!" });
+      return res.status(422).json({ message: "Cliente não encontrado!" });
     }
 
     const updatedClient = await foundedClient.update({
@@ -102,8 +96,7 @@ class ClientController {
 
     if (!updatedClient) {
       return res.status(500).json({
-        status: "error",
-        message: "Error editing client!",
+        message: "Erro ao atualizar cliente!",
       });
     }
 
@@ -116,17 +109,14 @@ class ClientController {
 
     if (!id) {
       return res.status(422).json({
-        status: "error",
-        message: "ID is required!",
+        message: "ID é obrigatório!",
       });
     }
 
     const foundedClient = await Client.findByPk(id);
 
     if (!foundedClient) {
-      return res
-        .status(422)
-        .json({ status: "error", message: "Client not found!" });
+      return res.status(422).json({ message: "Cliente não encontrado!" });
     }
 
     const inactiveClient = await foundedClient.update({
@@ -135,12 +125,45 @@ class ClientController {
 
     if (!inactiveClient) {
       return res.status(500).json({
-        status: "error",
-        message: "Error deactivating client!",
+        message: "Erro ao desativar cliente!",
       });
     }
 
     return res.status(201).json(inactiveClient);
+  }
+
+  // CREATE LOAN
+  static async createLoan(req, res) {
+    const { id, total, portion } = req.body;
+
+    if (!id || !total || !portion) {
+      return res.status(422).json({
+        message: "ID, Total e Parcela são obrigatórios!",
+      });
+    }
+
+    const foundedClient = await Client.findByPk(id);
+
+    // console.log(foundedClient);
+
+    if (!foundedClient) {
+      return res.status(422).json({
+        message: "Cliente não encontrado!",
+      });
+    }
+
+    const updatedClient = await foundedClient.update({
+      total: foundedClient.total + total,
+      portion,
+    });
+
+    if (!updatedClient) {
+      return res.status(500).json({
+        message: "Erro ao contratar empréstimo!",
+      });
+    }
+
+    return res.status(201).json(updatedClient);
   }
 }
 
