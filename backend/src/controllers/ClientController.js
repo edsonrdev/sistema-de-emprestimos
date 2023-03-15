@@ -8,7 +8,7 @@ class ClientController {
   // LIST ALL CLIENTS
   static async findAll(req, res) {
     const clients = await Client.findAll({
-      include: Loan,
+      include: { model: Loan, include: [Movement] },
     });
     return res.json(clients);
   }
@@ -36,7 +36,7 @@ class ClientController {
     const { id } = req.params;
 
     const client = await Client.findByPk(id, {
-      include: Loan,
+      include: { model: Loan, include: [Movement] },
     });
 
     if (!client) {

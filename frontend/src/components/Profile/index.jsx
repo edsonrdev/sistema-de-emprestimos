@@ -20,7 +20,7 @@ export const Profile = () => {
     <Container onClick={(e) => handleOpenMenu(e)}>
       <img src={ProfileImg} className="imgProfile" alt="Foto do Perfil" />
       <div className="menu" onClick={(e) => handleOpenMenu(e)} ref={menu}>
-        <span className="username">Erick N.</span>
+        <span className="username">Fulano</span>
         <img src={MenuIcon} className="menuIcon" alt="Ícone" />
       </div>
 

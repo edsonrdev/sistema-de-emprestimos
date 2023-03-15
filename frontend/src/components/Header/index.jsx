@@ -23,14 +23,6 @@ export const Header = ({ active }) => {
               Clientes
             </Link>
           </li>
-          <li>
-            <Link
-              to="/loans"
-              className={active === "loans" ? "active" : undefined}
-            >
-              Empréstimos
-            </Link>
-          </li>
         </ul>
 
         <Profile />

@@ -1,16 +1,25 @@
-import { Container } from "./styles";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useHistory } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { api } from "../../services";
-import { Header } from "../../components/Header";
-import { convertToRealBR } from "../../helpers/convertToRealBR";
-import { Button } from "../../components/Button";
-import { LoanModal } from "../../components/LoanModal";
 import { toast } from "react-toastify";
 
+import { api } from "../../services";
+import { convertToRealBR } from "../../helpers/convertToRealBR";
+import { convertDate } from "../../helpers/convertDate";
+
+import { Container } from "./styles";
+
+import { Header } from "../../components/Header";
+import { Button } from "../../components/Button";
+import { LoanModal } from "../../components/LoanModal";
+
 export const CustomerDetails = () => {
-  const [openModal, setOpenModal] = useState(false);
   const [customer, setCustomer] = useState({});
+  const loans = customer?.loans?.[0];
+  const portion = customer.loans?.[0]?.portion;
+  const movements = customer?.loans?.[0]?.movements;
+  // const myRef = useRef([]);
+
+  const [openModal, setOpenModal] = useState(false);
   const [currentCustomer, setCurrentCustomer] = useState({});
   const [modalType, setModalType] = useState("");
   const [desiredAmount, setDesiredAmount] = useState("");
@@ -25,14 +34,10 @@ export const CustomerDetails = () => {
 
   useEffect(() => {
     getCustomer();
-  }, [id]);
-
-  useEffect(() => {
-    getCustomer();
-  }, [customer]);
+  }, []);
 
   // useEffect(() => {
-  // getCustomer();
+  // console.log(customer);
   // }, [customer]);
 
   const handleCloseModal = () => {
@@ -54,8 +59,6 @@ export const CustomerDetails = () => {
       type: "input",
     };
 
-    // console.log(data);
-
     try {
       await api.post("/movements", data);
       toast.success("Valor abatido com sucesso!");
@@ -70,8 +73,6 @@ export const CustomerDetails = () => {
       amount: Number(desiredAmount),
       type: "output",
     };
-
-    // console.log(data);
 
     try {
       await api.post("/movements", data);
@@ -109,35 +110,97 @@ export const CustomerDetails = () => {
               />
             </div>
           ) : (
-            <div className="loan-input-values">
-              <h3>
-                Valor da parcela:{" "}
-                <span>{convertToRealBR(customer.loans?.[0].portion)}</span>
-              </h3>
+            <>
+              <div className="loan-input-values">
+                <h3>
+                  Valor da parcela: <span>{convertToRealBR(portion)}</span>
+                </h3>
 
-              <form className="form-change-total">
-                <Button
-                  onClick={handleInputAmount}
-                  text="Abater valor"
-                  type="button"
-                  typeUIButton="default"
-                />
-                <input
-                  type="number"
-                  min={1}
-                  step={0.01}
-                  placeholder="Valor desejado"
-                  value={desiredAmount}
-                  onChange={(e) => setDesiredAmount(e.target.value)}
-                />
-                <Button
-                  onClick={handleOutputAmount}
-                  text="Contratar valor"
-                  type="button"
-                  typeUIButton="default"
-                />
-              </form>
-            </div>
+                <form className="form-change-total">
+                  <Button
+                    onClick={handleInputAmount}
+                    text="Abater valor"
+                    type="button"
+                    typeUIButton="default"
+                  />
+                  <input
+                    type="number"
+                    min={1}
+                    step={0.01}
+                    placeholder="Digite o valor desejado"
+                    value={desiredAmount}
+                    onChange={(e) => setDesiredAmount(e.target.value)}
+                  />
+                  <Button
+                    onClick={handleOutputAmount}
+                    text="Contratar valor"
+                    type="button"
+                    typeUIButton="default"
+                  />
+                </form>
+              </div>
+
+              <div className="data-loan">
+                {movements.length > 0 && (
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Data</th>
+                        <th>Tipo</th>
+                        <th>Valor (R$)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {movements.map((mov) => (
+                        <tr key={mov.id}>
+                          <td>{mov.id}</td>
+                          <td>{convertDate(mov.createdAt)}</td>
+                          <td
+                            className={
+                              mov.type === "input" ? "input" : "output"
+                            }
+                          >
+                            {mov.type === "input" ? "Entrada" : "Saída"}
+                          </td>
+                          <td>{convertToRealBR(mov.amount)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+
+                <aside>
+                  <div className="current-loan-data">
+                    <header>Empréstimo atual</header>
+                    <ul>
+                      <li>
+                        <span className="data-title">Data de contratação:</span>
+                        <span className="data-value">
+                          {convertDate(loans?.createdAt)}
+                        </span>
+                      </li>
+                      <li>
+                        <span className="data-title">Valor contratado:</span>
+                        <span className="data-value">
+                          {convertToRealBR(customer?.loans?.[0]?.total)}
+                        </span>
+                      </li>
+                      <li>
+                        <span className="data-title">Valor pago:</span>
+                        <span className="data-value">
+                          {convertToRealBR(customer?.loans?.[0]?.paid)}
+                        </span>
+                      </li>
+                      <li>
+                        <span className="data-title">Valor restante:</span>
+                        <span className="data-value">R$ 1.336,78</span>
+                      </li>
+                    </ul>
+                  </div>
+                </aside>
+              </div>
+            </>
           )}
         </div>
       </main>

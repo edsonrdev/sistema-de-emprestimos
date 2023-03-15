@@ -81,6 +81,7 @@ export const Container = styled.div`
       display: flex;
       align-items: center;
       justify-content: space-between;
+      margin-bottom: 16px;
 
       .form-change-total {
         display: flex;
@@ -121,6 +122,96 @@ export const Container = styled.div`
           font-size: 18px;
           color: var(--red);
           font-weight: 600;
+        }
+      }
+    }
+
+    .data-loan {
+      display: flex;
+      gap: 16px;
+      justify-content: flex-end;
+
+      table {
+        flex: 1;
+        align-self: flex-start;
+        color: var(--gray-dark);
+        /* width: 100%; */
+        background: #eee;
+        border-radius: 5px;
+        border-spacing: 0;
+        overflow: hidden;
+
+        thead {
+          height: 52px !important;
+          background: var(--primary);
+
+          th {
+            color: var(--white);
+            padding: 12px;
+            font-size: 18px;
+            text-align: left;
+          }
+        }
+
+        tbody {
+          td {
+            font-size: 15px;
+            padding: 12px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+          }
+
+          td.input {
+            font-weight: bold;
+            color: var(--green);
+          }
+          td.output {
+            font-weight: bold;
+            color: var(--red);
+          }
+        }
+      }
+
+      aside {
+        flex-basis: 360px;
+        overflow: hidden;
+        border-radius: 5px;
+        border: 2px solid var(--primary);
+        /* background: var(--white); */
+        align-self: flex-start;
+
+        .current-loan-data {
+          header {
+            height: 50px;
+            padding: 0 16px;
+          }
+
+          ul {
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+            gap: 12px;
+
+            color: var(--gray-dark);
+            background: #eee;
+
+            li {
+              display: flex;
+              justify-content: space-between;
+
+              &:last-of-type .data-value {
+                font-weight: 700;
+                color: var(--red);
+              }
+            }
+
+            span {
+              font-size: 15px;
+
+              &.data-title {
+                font-weight: 700;
+              }
+            }
+          }
         }
       }
     }
