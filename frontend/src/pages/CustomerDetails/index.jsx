@@ -24,7 +24,8 @@ export const CustomerDetails = () => {
     getCustomer();
   }, [id]);
 
-  // console.log(customer.loans);
+  console.log(customer);
+  // console.log(customer?.loans?.movements);
 
   const handleCloseModal = () => {
     setCurrentCustomer({});
