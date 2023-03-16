@@ -48,6 +48,11 @@ class MovementController {
       clientId,
       amount,
       type,
+      remainder:
+        type === "input"
+          ? foundedClient?.remainder * 1.1 - amount
+          : foundedClient?.remainder + amount,
+      interest: foundedClient?.remainder * 0.1,
     });
 
     // updated client

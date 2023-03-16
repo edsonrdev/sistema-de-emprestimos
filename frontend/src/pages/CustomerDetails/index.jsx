@@ -57,7 +57,7 @@ export const CustomerDetails = () => {
 
   const handleInputAmount = async () => {
     const data = {
-      loanId: customer.id,
+      clientId: customer.id,
       amount: Number(desiredAmount),
       type: "input",
     };
@@ -72,7 +72,7 @@ export const CustomerDetails = () => {
 
   const handleOutputAmount = async () => {
     const data = {
-      loanId: customer.id,
+      clientId: customer.id,
       amount: Number(desiredAmount),
       type: "output",
     };
@@ -153,13 +153,15 @@ export const CustomerDetails = () => {
                         <th>Data</th>
                         <th>Tipo</th>
                         <th>Valor (R$)</th>
+                        <th>Juros (R$)</th>
+                        <th>Valor restante (R$)</th>
                       </tr>
                     </thead>
                     <tbody>
                       {customer?.movements.map((mov) => (
                         <tr key={mov.id}>
                           <td>{mov.id}</td>
-                          <td>{mov.createdAt}</td>
+                          <td>{convertDate(mov?.createdAt)}</td>
                           <td
                             className={
                               mov.type === "input" ? "input" : "output"
@@ -168,6 +170,13 @@ export const CustomerDetails = () => {
                             {mov.type === "input" ? "Entrada" : "Saída"}
                           </td>
                           <td>{convertToRealBR(mov.amount)}</td>
+                          <td>{convertToRealBR(mov.interest)}</td>
+                          <td>
+                            {convertToRealBR(mov.remainder)} +{" "}
+                            {convertToRealBR(mov.interest)} -{" "}
+                            {convertToRealBR(mov.amount)} ={" "}
+                            {convertToRealBR(mov.remainder)}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -179,9 +188,10 @@ export const CustomerDetails = () => {
                     <header>Empréstimo atual</header>
                     <ul>
                       <li>
-                        <span className="data-title">Data de contratação:</span>
+                        <span className="data-title">Contratação:</span>
                         <span className="data-value">
-                          {customer?.createdAt}
+                          {/* {customer?.createdAt} */}
+                          {convertDate(customer?.createdAt)}
                         </span>
                       </li>
                       <li>
