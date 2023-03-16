@@ -9,7 +9,7 @@ const createUserToken = async (user, req, res) => {
     "<?MyS3cr3t!>"
   );
 
-  return res.status(200).json({
+  return res.status(201).json({
     user: {
       id: user.id,
       name: user.name,

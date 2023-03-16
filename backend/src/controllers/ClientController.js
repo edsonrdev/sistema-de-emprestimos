@@ -1,7 +1,6 @@
 import { where } from "sequelize";
 import connection from "../database/connection.js";
 import Client from "../models/Client.js";
-import Loan from "../models/Loan.js";
 import Movement from "../models/Movement.js";
 
 class ClientController {
@@ -134,7 +133,7 @@ class ClientController {
 
   // CREATE LOAN
   static async createLoan(req, res) {
-    const { id, total, portion } = req.body;
+    const { id, total, portion, paid = 0 } = req.body;
 
     if (!id || !total || !portion) {
       return res.status(422).json({
@@ -144,17 +143,22 @@ class ClientController {
 
     const foundedClient = await Client.findByPk(id);
 
-    // console.log(foundedClient);
-
     if (!foundedClient) {
       return res.status(422).json({
         message: "Cliente não encontrado!",
       });
     }
 
+    if (foundedClient?.total > 0 || foundedClient?.movements?.[0]) {
+      return res
+        .status(422)
+        .json({ message: "Erro! Este cliente já contratou empréstimo!" });
+    }
+
     const updatedClient = await foundedClient.update({
       total: foundedClient.total + total,
-      portion,
+      portion: portion,
+      paid: paid,
     });
 
     if (!updatedClient) {

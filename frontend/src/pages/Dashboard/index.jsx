@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-import { Link } from "react-router-dom";
 import { Container } from "./styles";
 
 import BorrowedIcon from "../../assets/BorrowedIcon.svg";
@@ -16,17 +15,9 @@ import { convertToRealBR } from "../../helpers/convertToRealBR";
 export const Dashboard = () => {
   const [clients, setClients] = useState([]);
 
-  const borrowedTotal = clients
-    .filter((client) => client.loans.length)
-    .map((client) => client.loans)
-    .map((loan) => loan[0].total)
-    .reduce((acc, loan) => acc + loan, 0);
+  const borrowedTotal = clients.reduce((acc, client) => acc + client.total, 0);
 
-  const receivedTotal = clients
-    .filter((client) => client.loans.length)
-    .map((client) => client.loans)
-    .map((loan) => loan[0].paid)
-    .reduce((acc, loan) => acc + loan, 0);
+  const receivedTotal = clients.reduce((acc, client) => acc + client.paid, 0);
 
   const remainderTotal = borrowedTotal - receivedTotal;
 

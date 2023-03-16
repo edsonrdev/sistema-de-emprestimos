@@ -7,7 +7,6 @@ import connection from "./database/connection.js";
 // import the models
 import User from "./models/User.js";
 import Client from "./models/Client.js";
-import Loan from "./models/Loan.js";
 import Movement from "./models/Movement.js";
 
 // import routes
@@ -24,8 +23,8 @@ app.use(routes);
 
 // run the server and build the models, if a connection is OK
 connection
-  .sync({ force: true })
-  // .sync()
+  // .sync({ force: true })
+  .sync()
   .then(() => {
     app.listen(PORT, () => {
       console.log(`Server started in port ${PORT}`);

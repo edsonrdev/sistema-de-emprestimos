@@ -15,21 +15,23 @@ class UserController {
     const { name, email, password, passwordConfirm } = req.body;
 
     if (!name || !email || !password || !passwordConfirm) {
-      return res.status(422).json({ message: "All fields are required!" });
+      return res
+        .status(422)
+        .json({ message: "Todos os campos são obrigatórios!" });
     }
 
     if (!/^[\w+.]+@\w+\.\w{2,}(?:\.\w{2})?$/.test(email)) {
-      return res.status(422).json({ message: "Email is invalid!" });
+      return res.status(422).json({ message: "E-mail inválido!" });
     }
 
     const emailAlreadyExists = await User.findOne({ where: { email: email } });
 
     if (emailAlreadyExists) {
-      return res.status(422).json({ message: "E-mail already registered!" });
+      return res.status(422).json({ message: "E-mail já cadastrado!" });
     }
 
     if (password !== passwordConfirm) {
-      return res.status(422).json({ message: "Passwords do not match!" });
+      return res.status(422).json({ message: "As senhas não correspondem!" });
     }
 
     const salt = await bcrypt.genSalt(12);
@@ -41,7 +43,7 @@ class UserController {
       password: passwordHash,
     });
 
-    return res.json(user);
+    return res.status(201).json(user);
   }
 
   // MAKE LOGIN USER
@@ -49,13 +51,15 @@ class UserController {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(422).json({ message: "All fields are required!" });
+      return res
+        .status(422)
+        .json({ message: "Todos os campos são obrigatórios!" });
     }
 
     const user = await User.findOne({ where: { email: email } });
 
     if (!user) {
-      return res.status(422).json({ message: "User not found!" });
+      return res.status(422).json({ message: "Uusário não encontrado!" });
     }
 
     const checkPassword = await bcrypt.compare(password, user?.password);
@@ -72,7 +76,7 @@ class UserController {
     const { id, name, photo } = req.body;
 
     if (!id || !name) {
-      return res.status(422).json({ message: "All fields are required!" });
+      return res.status(422).json({ message: "ID e Nome são obrigatórios!" });
     }
 
     const updatedUser = await User.update(
@@ -85,10 +89,10 @@ class UserController {
     );
 
     if (!updatedUser) {
-      res.json({ message: "Error updating user data!" });
+      res.json({ message: "Erro ao atualizar dados do usuário!" });
     }
 
-    res.json(updatedUser);
+    res.status(201).json(updatedUser);
   }
 }
 

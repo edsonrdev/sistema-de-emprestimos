@@ -1,5 +1,5 @@
 import connection from "../database/connection.js";
-import Loan from "../models/Loan.js";
+import Client from "../models/Client.js";
 import Movement from "../models/Movement.js";
 
 class MovementController {
@@ -9,52 +9,60 @@ class MovementController {
     return res.json(movements);
   }
 
-  // LIST ALL MOVEMENTS BY LOAN
-  static async findByLoan(req, res) {
-    const { id } = req.params;
-
-    const loan = await Loan.findByPk(id, { include: Movement });
-
-    if (!loan) {
-      return res.status(422).json({ message: "Empréstimo não encontrado!" });
-    }
-
-    console.log(loan);
-
-    // const movementsInLoan = loan.map
-  }
-
   // CREATE A NEW MOVEMENT
   static async create(req, res) {
-    const { loanId, amount, type } = req.body;
-    // console.log(loanId, amount, type);
+    const { clientId, amount, type } = req.body;
 
-    if (!loanId || !amount || !type) {
-      return res.status(422).json({ message: "All fields are requireds!" });
+    if (!clientId || !amount || !type) {
+      return res
+        .status(422)
+        .json({ message: "ID do cliente, Valor e Tipo são obrigatórios!" });
     }
 
-    const loan = await Loan.findByPk(loanId);
+    const foundedClient = await Client.findByPk(clientId);
 
-    if (!loan) {
-      return res.status(422).json({ message: "Loan not found!" });
+    if (!foundedClient) {
+      return res.status(422).json({ message: "Cliente não encontrado!" });
+    }
+
+    if (!(foundedClient?.total > 0 || foundedClient?.movements?.[0])) {
+      return res
+        .status(422)
+        .json({ message: "Erro! Contrate um empréstimo antes!" });
+    }
+
+    if (foundedClient.paid === foundedClient.total && type === "input") {
+      return res
+        .status(422)
+        .json({ message: "Erro! O cliente não tem débitos!" });
+    }
+
+    if (amount > foundedClient.remainder && type === "input") {
+      return res.status(422).json({
+        message: "Erro! O débito é menor que o valor informado para abate!",
+      });
     }
 
     // create new movement
     const createdMovement = await Movement.create({
-      loanId,
+      clientId,
       amount,
       type,
     });
 
-    // update loan
-    const updatedLoan = await loan.update({
-      total: type === "output" ? loan.total + amount : loan.total,
-      paid: type === "input" ? loan.paid + amount : loan.paid,
-      remainder: type === "input" ? loan.total - amount : loan.total + amount,
+    // updated client
+    const updatedClient = await foundedClient.update({
+      total:
+        type === "output" ? foundedClient.total + amount : foundedClient.total,
+      paid: type === "input" ? foundedClient.paid + amount : foundedClient.paid,
+      remainder:
+        type === "input"
+          ? foundedClient.total - amount
+          : foundedClient.total + amount,
     });
 
     if (!createdMovement) {
-      return res.status(422).json({ message: "Error registering movement!" });
+      return res.status(422).json({ message: "Erro ao gerar movimentação!" });
     }
 
     return res.json(createdMovement);

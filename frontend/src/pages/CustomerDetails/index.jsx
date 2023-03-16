@@ -14,9 +14,7 @@ import { LoanModal } from "../../components/LoanModal";
 
 export const CustomerDetails = () => {
   const [customer, setCustomer] = useState({});
-  const loans = customer?.loans?.[0];
-  const portion = customer.loans?.[0]?.portion;
-  const movements = customer?.loans?.[0]?.movements;
+  // const movements = customer?.movements;
   // const myRef = useRef([]);
 
   const [openModal, setOpenModal] = useState(false);
@@ -35,6 +33,11 @@ export const CustomerDetails = () => {
   useEffect(() => {
     getCustomer();
   }, []);
+
+  console.log(customer.total > 0);
+
+  // console.log(movements);
+  // console.log(customer);
 
   // useEffect(() => {
   // console.log(customer);
@@ -99,7 +102,7 @@ export const CustomerDetails = () => {
             />
           </div>
 
-          {!customer.loans?.length ? (
+          {customer.total === 0 && customer?.movements?.length === 0 ? (
             <div className="hire-loan">
               <p>O cliente ainda não tem empréstimos contratados.</p>
               <Button
@@ -113,7 +116,8 @@ export const CustomerDetails = () => {
             <>
               <div className="loan-input-values">
                 <h3>
-                  Valor da parcela: <span>{convertToRealBR(portion)}</span>
+                  Valor da parcela:{" "}
+                  <span>{convertToRealBR(customer?.portion)}</span>
                 </h3>
 
                 <form className="form-change-total">
@@ -141,7 +145,7 @@ export const CustomerDetails = () => {
               </div>
 
               <div className="data-loan">
-                {movements.length > 0 && (
+                {customer?.movements?.length > 0 && (
                   <table>
                     <thead>
                       <tr>
@@ -152,10 +156,10 @@ export const CustomerDetails = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {movements.map((mov) => (
+                      {customer?.movements.map((mov) => (
                         <tr key={mov.id}>
                           <td>{mov.id}</td>
-                          <td>{convertDate(mov.createdAt)}</td>
+                          <td>{mov.createdAt}</td>
                           <td
                             className={
                               mov.type === "input" ? "input" : "output"
@@ -177,24 +181,26 @@ export const CustomerDetails = () => {
                       <li>
                         <span className="data-title">Data de contratação:</span>
                         <span className="data-value">
-                          {convertDate(loans?.createdAt)}
+                          {customer?.createdAt}
                         </span>
                       </li>
                       <li>
                         <span className="data-title">Valor contratado:</span>
                         <span className="data-value">
-                          {convertToRealBR(customer?.loans?.[0]?.total)}
+                          {convertToRealBR(customer?.total)}
                         </span>
                       </li>
                       <li>
                         <span className="data-title">Valor pago:</span>
                         <span className="data-value">
-                          {convertToRealBR(customer?.loans?.[0]?.paid)}
+                          {convertToRealBR(customer?.paid)}
                         </span>
                       </li>
                       <li>
                         <span className="data-title">Valor restante:</span>
-                        <span className="data-value">R$ 1.336,78</span>
+                        <span className="data-value">
+                          {convertToRealBR(customer?.remainder)}
+                        </span>
                       </li>
                     </ul>
                   </div>
