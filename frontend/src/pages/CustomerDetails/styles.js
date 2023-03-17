@@ -155,17 +155,17 @@ export const Container = styled.div`
 
         tbody {
           td {
-            font-size: 15px;
+            font-size: 14px;
             padding: 12px;
             border-bottom: 1px solid rgba(0, 0, 0, 0.2);
           }
 
           td.input {
-            font-weight: bold;
+            font-weight: 600;
             color: var(--green);
           }
           td.output {
-            font-weight: bold;
+            font-weight: 600;
             color: var(--red);
           }
         }

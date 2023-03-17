@@ -10,7 +10,6 @@ import InactivateIcon from "../../assets/InactivateIcon.svg";
 
 import { Header } from "../../components/Header";
 import { ClientModal } from "../../components/ClientModal";
-import { FullModal } from "../../components/FullModal";
 import { Button } from "../../components/Button";
 
 export const Customers = () => {
@@ -156,7 +155,7 @@ export const Customers = () => {
       </main>
 
       {openModal && (
-        <FullModal
+        <ClientModal
           modalType={modalType}
           handleCloseModal={handleCloseModal}
           currentCustomer={currentCustomer}

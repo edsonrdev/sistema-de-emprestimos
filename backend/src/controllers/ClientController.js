@@ -8,6 +8,7 @@ class ClientController {
   static async findAll(req, res) {
     const clients = await Client.findAll({
       include: Movement,
+      order: [[Movement, "id", "DESC"]],
     });
     return res.json(clients);
   }
@@ -133,15 +134,15 @@ class ClientController {
 
   // CREATE LOAN
   static async createLoan(req, res) {
-    const { id, total, portion, paid = 0 } = req.body;
+    const { clientId, total, portion, paid = 0 } = req.body;
 
-    if (!id || !total || !portion) {
+    if (!clientId || !total || !portion) {
       return res.status(422).json({
         message: "ID, Total e Parcela são obrigatórios!",
       });
     }
 
-    const foundedClient = await Client.findByPk(id);
+    const foundedClient = await Client.findByPk(clientId);
 
     if (!foundedClient) {
       return res.status(422).json({

@@ -5,7 +5,9 @@ import Movement from "../models/Movement.js";
 class MovementController {
   // LIST ALL MOVEMENTS
   static async findAll(req, res) {
-    const movements = await Movement.findAll();
+    const movements = await Movement.findAll({
+      order: [["id", "DESC"]],
+    });
     return res.json(movements);
   }
 

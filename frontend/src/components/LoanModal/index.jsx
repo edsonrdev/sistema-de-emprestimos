@@ -26,11 +26,11 @@ export const LoanModal = ({
   const [isOldLoan, setIsOldLoan] = useState(false);
 
   const schema = yup.object().shape({
-    total: yup.string().required("O valor TOTAL é obrigatório!"),
-    portion: yup.string().required("O valor da PARCELA é obrigatório!"),
+    total: yup.string().required("O VALOR TOTAL é obrigatório!"),
+    portion: yup.string().required("O VALOR DA PARCELA é obrigatório!"),
 
     ...(isOldLoan && {
-      paid: yup.string().required("O total JÁ PAGO é obrigatório!"),
+      paid: yup.string().required("O TOTAL JÁ PAGO é obrigatório!"),
     }),
   });
 
@@ -39,6 +39,8 @@ export const LoanModal = ({
     handleSubmit,
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) });
+
+  !isOldLoan && delete errors?.paid?.message;
 
   const submitCallback = async (data) => {
     let { clientId, total, portion } = data;
@@ -56,8 +58,10 @@ export const LoanModal = ({
       paid,
     };
 
+    console.log(loanData);
+
     try {
-      await api.post("/loans", loanData);
+      await api.post("/clients/loan", loanData);
       handleCloseModal();
       toast.success("Empréstimo contratado com sucesso!");
     } catch (err) {
@@ -134,9 +138,7 @@ export const LoanModal = ({
                     placeholder="1.200,00"
                     {...register("paid")}
                   />
-                  {isOldLoan && (
-                    <span className="error">{errors.paid?.message}</span>
-                  )}
+                  <span className="error">{errors.paid?.message}</span>
                 </div>
               )}
             </div>

@@ -151,14 +151,13 @@ export const CustomerDetails = () => {
                       <tr>
                         <th>ID</th>
                         <th>Data</th>
-                        <th>Tipo</th>
-                        <th>Valor (R$)</th>
-                        <th>Juros (R$)</th>
-                        <th>Valor restante (R$)</th>
+                        <th>Valor</th>
+                        <th>Juros</th>
+                        <th>Valor restante</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {customer?.movements.map((mov) => (
+                      {customer?.movements.reverse().map((mov) => (
                         <tr key={mov.id}>
                           <td>{mov.id}</td>
                           <td>{convertDate(mov?.createdAt)}</td>
@@ -167,16 +166,10 @@ export const CustomerDetails = () => {
                               mov.type === "input" ? "input" : "output"
                             }
                           >
-                            {mov.type === "input" ? "Entrada" : "Saída"}
+                            {convertToRealBR(mov.amount)}
                           </td>
-                          <td>{convertToRealBR(mov.amount)}</td>
                           <td>{convertToRealBR(mov.interest)}</td>
-                          <td>
-                            {convertToRealBR(mov.remainder)} +{" "}
-                            {convertToRealBR(mov.interest)} -{" "}
-                            {convertToRealBR(mov.amount)} ={" "}
-                            {convertToRealBR(mov.remainder)}
-                          </td>
+                          <td>{convertToRealBR(mov.remainder)}</td>
                         </tr>
                       ))}
                     </tbody>
