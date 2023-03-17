@@ -18,7 +18,17 @@ const Movement = connection.define("movement", {
     allowNull: false,
     required: true,
   },
+  previousDebit: {
+    type: DataTypes.FLOAT,
+    allowNull: false,
+    required: true,
+  },
   interest: {
+    type: DataTypes.FLOAT,
+    allowNull: false,
+    required: true,
+  },
+  remainderDebit: {
     type: DataTypes.FLOAT,
     allowNull: false,
     required: true,

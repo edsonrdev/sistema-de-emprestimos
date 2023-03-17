@@ -115,7 +115,7 @@ export const Customers = () => {
             </thead>
 
             <tbody>
-              {customers.map((customer) => (
+              {[...customers].reverse().map((customer) => (
                 <tr key={customer.id}>
                   <td>
                     {customer.active ? (

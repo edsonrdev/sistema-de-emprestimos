@@ -83,30 +83,6 @@ export const Container = styled.div`
       justify-content: space-between;
       margin-bottom: 16px;
 
-      .form-change-total {
-        display: flex;
-
-        button:nth-of-type(1) {
-          border-radius: 5px 0 0 5px;
-          border-left-color: transparent;
-        }
-        button:nth-of-type(2) {
-          border-radius: 0 5px 5px 0;
-          border-left-color: transparent;
-        }
-
-        input {
-          min-width: 100px;
-          padding: 0 12px;
-
-          outline: 0;
-          border-radius: 0;
-          border: 2px solid var(--gray-medium);
-          border-left-color: transparent;
-          border-right-color: transparent;
-        }
-      }
-
       h3 {
         display: flex;
         align-items: center;
@@ -147,17 +123,19 @@ export const Container = styled.div`
 
           th {
             color: var(--white);
-            padding: 12px;
+            padding: 10px;
             font-size: 18px;
             text-align: left;
+            border-right: 1px solid rgba(255, 255, 255, 0.25);
           }
         }
 
         tbody {
           td {
             font-size: 14px;
-            padding: 12px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-right: 1px solid rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
           }
 
           td.input {
@@ -173,13 +151,71 @@ export const Container = styled.div`
 
       aside {
         flex-basis: 360px;
-        overflow: hidden;
-        border-radius: 5px;
-        border: 2px solid var(--primary);
-        /* background: var(--white); */
         align-self: flex-start;
 
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+
+        .form-change-total {
+          display: flex;
+          flex-direction: column;
+          /* overflow: hidden; */
+          border-radius: 5px;
+          border: 2px solid var(--gray-dark);
+
+          input {
+            height: 50px;
+            min-width: 100px;
+            padding: 0 12px;
+
+            outline: 0;
+            border-radius: 3px 3px 0 0;
+            border: 0;
+
+            font-size: 15px;
+
+            ::placeholder {
+              font-size: 15px;
+            }
+          }
+
+          .buttons {
+            display: flex;
+
+            button {
+              flex: 1;
+              border-radius: 0;
+              border: 0 !important;
+            }
+
+            button:nth-of-type(1) {
+              /* border-left-color: transparent; */
+              border-radius: 0 0 0 3px;
+              background: var(--green);
+              border: 2px solid var(--green-dark);
+
+              &:hover {
+                background: var(--green-dark);
+              }
+            }
+            button:nth-of-type(2) {
+              border-radius: 0 0 3px 0;
+              background: var(--red);
+              border: 2px solid var(--red-dark);
+
+              &:hover {
+                background: var(--red-dark);
+              }
+            }
+          }
+        }
+
         .current-loan-data {
+          overflow: hidden;
+          border-radius: 5px;
+          border: 2px solid var(--primary);
+
           header {
             height: 50px;
             padding: 0 16px;

@@ -14,17 +14,28 @@ import { LoanModal } from "../../components/LoanModal";
 
 export const CustomerDetails = () => {
   const [customer, setCustomer] = useState({});
-  // const movements = customer?.movements;
-  // const myRef = useRef([]);
+
+  const totalPaid =
+    customer?.paid +
+    customer?.movements
+      ?.filter((mov) => mov?.type === "input")
+      ?.reduce((acc, item) => acc + item?.amount, 0);
+
+  const totalAdditional = customer?.movements
+    ?.filter((mov) => mov?.type === "output")
+    ?.reduce((acc, item) => acc + item?.amount, 0);
+
+  // console.log(totalAdditional);
 
   const [openModal, setOpenModal] = useState(false);
   const [currentCustomer, setCurrentCustomer] = useState({});
   const [modalType, setModalType] = useState("");
-  const [desiredAmount, setDesiredAmount] = useState("");
+
+  const desiredAmountRef = useRef(null);
+
   const { id } = useParams();
   const history = useHistory();
 
-  // console.log(desiredAmount);
   const getCustomer = async () => {
     const res = await api.get(`/clients/${id}`);
     setCustomer(res.data);
@@ -34,14 +45,10 @@ export const CustomerDetails = () => {
     getCustomer();
   }, []);
 
-  console.log(customer.total > 0);
-
-  // console.log(movements);
-  // console.log(customer);
-
-  // useEffect(() => {
-  // console.log(customer);
-  // }, [customer]);
+  useEffect(() => {
+    // console.log(customer);
+    getCustomer();
+  }, [customer]);
 
   const handleCloseModal = () => {
     setCurrentCustomer({});
@@ -58,7 +65,7 @@ export const CustomerDetails = () => {
   const handleInputAmount = async () => {
     const data = {
       clientId: customer.id,
-      amount: Number(desiredAmount),
+      amount: Number(desiredAmountRef.current.value),
       type: "input",
     };
 
@@ -68,12 +75,14 @@ export const CustomerDetails = () => {
     } catch (error) {
       toast.error(error.response.data.message);
     }
+
+    desiredAmountRef.current.value = "";
   };
 
   const handleOutputAmount = async () => {
     const data = {
       clientId: customer.id,
-      amount: Number(desiredAmount),
+      amount: Number(desiredAmountRef.current.value),
       type: "output",
     };
 
@@ -83,6 +92,8 @@ export const CustomerDetails = () => {
     } catch (error) {
       toast.error(error.response.data.message);
     }
+
+    desiredAmountRef.current.value = "";
   };
 
   return (
@@ -102,7 +113,7 @@ export const CustomerDetails = () => {
             />
           </div>
 
-          {customer.total === 0 && customer?.movements?.length === 0 ? (
+          {customer.initial === 0 && customer?.movements?.length === 0 ? (
             <div className="hire-loan">
               <p>O cliente ainda não tem empréstimos contratados.</p>
               <Button
@@ -119,29 +130,6 @@ export const CustomerDetails = () => {
                   Valor da parcela:{" "}
                   <span>{convertToRealBR(customer?.portion)}</span>
                 </h3>
-
-                <form className="form-change-total">
-                  <Button
-                    onClick={handleInputAmount}
-                    text="Abater valor"
-                    type="button"
-                    typeUIButton="default"
-                  />
-                  <input
-                    type="number"
-                    min={1}
-                    step={0.01}
-                    placeholder="Digite o valor desejado"
-                    value={desiredAmount}
-                    onChange={(e) => setDesiredAmount(e.target.value)}
-                  />
-                  <Button
-                    onClick={handleOutputAmount}
-                    text="Contratar valor"
-                    type="button"
-                    typeUIButton="default"
-                  />
-                </form>
               </div>
 
               <div className="data-loan">
@@ -149,18 +137,20 @@ export const CustomerDetails = () => {
                   <table>
                     <thead>
                       <tr>
-                        <th>ID</th>
                         <th>Data</th>
+                        <th>Dívida anterior</th>
+                        <th>Juros (10%)</th>
                         <th>Valor</th>
-                        <th>Juros</th>
-                        <th>Valor restante</th>
+                        <th>Dívida restante</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {customer?.movements.reverse().map((mov) => (
+                      {customer?.movements.map((mov) => (
                         <tr key={mov.id}>
-                          <td>{mov.id}</td>
                           <td>{convertDate(mov?.createdAt)}</td>
+
+                          <td>{convertToRealBR(mov?.previousDebit)}</td>
+                          <td>{convertToRealBR(mov.interest)}</td>
                           <td
                             className={
                               mov.type === "input" ? "input" : "output"
@@ -168,8 +158,12 @@ export const CustomerDetails = () => {
                           >
                             {convertToRealBR(mov.amount)}
                           </td>
-                          <td>{convertToRealBR(mov.interest)}</td>
-                          <td>{convertToRealBR(mov.remainder)}</td>
+                          {/* <td>{convertToRealBR(mov.remainder)}</td> */}
+                          <td>
+                            {mov.type === "input"
+                              ? `${mov.previousDebit} + ${mov.interest} - ${mov.amount} = ${mov.remainderDebit}`
+                              : `${mov.previousDebit} + ${mov.amount} = ${mov.remainderDebit}`}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -177,30 +171,60 @@ export const CustomerDetails = () => {
                 )}
 
                 <aside>
+                  <form className="form-change-total">
+                    <input
+                      ref={desiredAmountRef}
+                      type="number"
+                      min={1}
+                      step={0.01}
+                      placeholder="Digite o valor desejado"
+                    />
+                    <div className="buttons">
+                      <Button
+                        onClick={handleInputAmount}
+                        text="Abater valor"
+                        type="button"
+                        typeUIButton="default"
+                      />
+
+                      <Button
+                        onClick={handleOutputAmount}
+                        text="Pegar adicional"
+                        type="button"
+                        typeUIButton="default"
+                      />
+                    </div>
+                  </form>
+
                   <div className="current-loan-data">
-                    <header>Empréstimo atual</header>
+                    <header>Resumo do empréstimo</header>
                     <ul>
                       <li>
-                        <span className="data-title">Contratação:</span>
+                        <span className="data-title">
+                          Contratado inicialmente:
+                        </span>
                         <span className="data-value">
-                          {/* {customer?.createdAt} */}
-                          {convertDate(customer?.createdAt)}
+                          {convertToRealBR(customer?.initial)}
                         </span>
                       </li>
                       <li>
-                        <span className="data-title">Valor contratado:</span>
+                        <span className="data-title">Total abatido:</span>
                         <span className="data-value">
-                          {convertToRealBR(customer?.total)}
+                          {/* {convertToRealBR(customer?.paid)} */}
+                          {convertToRealBR(totalPaid)}
                         </span>
                       </li>
                       <li>
-                        <span className="data-title">Valor pago:</span>
+                        <span className="data-title">
+                          Total pego adicionalmente:
+                        </span>
                         <span className="data-value">
-                          {convertToRealBR(customer?.paid)}
+                          {convertToRealBR(totalAdditional)}
                         </span>
                       </li>
+
                       <li>
-                        <span className="data-title">Valor restante:</span>
+                        <span className="data-title">Total restante:</span>
                         <span className="data-value">
                           {convertToRealBR(customer?.remainder)}
                         </span>

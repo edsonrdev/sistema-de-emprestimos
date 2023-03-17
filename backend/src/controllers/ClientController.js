@@ -8,7 +8,10 @@ class ClientController {
   static async findAll(req, res) {
     const clients = await Client.findAll({
       include: Movement,
-      order: [[Movement, "id", "DESC"]],
+      order: [
+        ["id", "DESC"],
+        [Movement, "id", "DESC"],
+      ],
     });
     return res.json(clients);
   }
@@ -134,11 +137,12 @@ class ClientController {
 
   // CREATE LOAN
   static async createLoan(req, res) {
-    const { clientId, total, portion, paid = 0 } = req.body;
+    const { clientId, initial, portion, paid = 0 } = req.body;
 
-    if (!clientId || !total || !portion) {
+    if (!clientId || !initial || !portion) {
       return res.status(422).json({
-        message: "ID, Total e Parcela são obrigatórios!",
+        message:
+          "ID do Cliente, Valor Inicial e Valor da Parcela são obrigatórios!",
       });
     }
 
@@ -150,14 +154,16 @@ class ClientController {
       });
     }
 
-    if (foundedClient?.total > 0 || foundedClient?.movements?.[0]) {
+    // não deixa criar outro empréstimo, se o cliente já tiver um
+    if (foundedClient?.initial || foundedClient?.movements?.[0]) {
       return res
         .status(422)
         .json({ message: "Erro! Este cliente já contratou empréstimo!" });
     }
 
+    // cria o empréstimo, tudo OK
     const updatedClient = await foundedClient.update({
-      total: foundedClient.total + total,
+      initial: foundedClient.initial + initial,
       portion: portion,
       paid: paid,
     });

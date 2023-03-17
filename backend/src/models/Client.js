@@ -22,7 +22,7 @@ const Client = connection.define("client", {
   },
 
   // attributes of the loan
-  total: {
+  initial: {
     type: DataTypes.FLOAT,
     defaultValue: 0,
   },
@@ -39,9 +39,9 @@ const Client = connection.define("client", {
     defaultValue: 0,
     get() {
       if (this.getDataValue("paid")) {
-        return this.getDataValue("total") - this.getDataValue("paid");
+        return this.getDataValue("initial") - this.getDataValue("paid");
       }
-      return this.getDataValue("total");
+      return this.getDataValue("initial");
     },
   },
 });

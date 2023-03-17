@@ -27,13 +27,13 @@ class MovementController {
       return res.status(422).json({ message: "Cliente não encontrado!" });
     }
 
-    if (!(foundedClient?.total > 0 || foundedClient?.movements?.[0])) {
+    if (!(foundedClient?.initial > 0 || foundedClient?.movements?.[0])) {
       return res
         .status(422)
         .json({ message: "Erro! Contrate um empréstimo antes!" });
     }
 
-    if (foundedClient.paid === foundedClient.total && type === "input") {
+    if (foundedClient.paid === foundedClient.initial && type === "input") {
       return res
         .status(422)
         .json({ message: "Erro! O cliente não tem débitos!" });
@@ -50,22 +50,30 @@ class MovementController {
       clientId,
       amount,
       type,
+
       remainder:
         type === "input"
-          ? foundedClient?.remainder * 1.1 - amount
+          ? foundedClient?.remainder - amount
           : foundedClient?.remainder + amount,
+      previousDebit: foundedClient?.remainder,
       interest: foundedClient?.remainder * 0.1,
+      remainderDebit:
+        type === "input"
+          ? foundedClient?.remainder + foundedClient?.remainder * 0.1 - amount
+          : foundedClient?.remainder + amount,
     });
 
     // updated client
     const updatedClient = await foundedClient.update({
-      total:
-        type === "output" ? foundedClient.total + amount : foundedClient.total,
+      initial:
+        type === "output"
+          ? foundedClient.initial + amount
+          : foundedClient.initial,
       paid: type === "input" ? foundedClient.paid + amount : foundedClient.paid,
       remainder:
         type === "input"
-          ? foundedClient.total - amount
-          : foundedClient.total + amount,
+          ? foundedClient.initial - amount
+          : foundedClient.initial + amount,
     });
 
     if (!createdMovement) {
