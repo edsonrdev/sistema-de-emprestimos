@@ -13,12 +13,9 @@ const Movement = connection.define("movement", {
     allowNull: false,
     required: true,
   },
-  remainder: {
-    type: DataTypes.FLOAT,
-    allowNull: false,
-    required: true,
-  },
-  previousDebit: {
+
+  // specific data loan
+  previous: {
     type: DataTypes.FLOAT,
     allowNull: false,
     required: true,
@@ -28,7 +25,7 @@ const Movement = connection.define("movement", {
     allowNull: false,
     required: true,
   },
-  remainderDebit: {
+  remainder: {
     type: DataTypes.FLOAT,
     allowNull: false,
     required: true,

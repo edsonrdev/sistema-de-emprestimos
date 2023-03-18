@@ -26,6 +26,10 @@ const Client = connection.define("client", {
     type: DataTypes.FLOAT,
     defaultValue: 0,
   },
+  total: {
+    type: DataTypes.FLOAT,
+    defaultValue: 0,
+  },
   portion: {
     type: DataTypes.FLOAT,
     defaultValue: 0,
@@ -33,16 +37,6 @@ const Client = connection.define("client", {
   paid: {
     type: DataTypes.FLOAT,
     defaultValue: 0,
-  },
-  remainder: {
-    type: DataTypes.VIRTUAL,
-    defaultValue: 0,
-    get() {
-      if (this.getDataValue("paid")) {
-        return this.getDataValue("initial") - this.getDataValue("paid");
-      }
-      return this.getDataValue("initial");
-    },
   },
 });
 

@@ -137,12 +137,11 @@ class ClientController {
 
   // CREATE LOAN
   static async createLoan(req, res) {
-    const { clientId, initial, portion, paid = 0 } = req.body;
+    const { clientId, amount, portion, paid = 0 } = req.body;
 
-    if (!clientId || !initial || !portion) {
+    if (!clientId || !amount || !portion) {
       return res.status(422).json({
-        message:
-          "ID do Cliente, Valor Inicial e Valor da Parcela são obrigatórios!",
+        message: "ID, Empréstimo e Parcela são obrigatórios!",
       });
     }
 
@@ -154,18 +153,19 @@ class ClientController {
       });
     }
 
-    // não deixa criar outro empréstimo, se o cliente já tiver um
+    // SE O CLIENTE JÁ TEM EMPRÉSIMO, NÃO DEIXA CRIAR OUTRO!
     if (foundedClient?.initial || foundedClient?.movements?.[0]) {
       return res
         .status(422)
         .json({ message: "Erro! Este cliente já contratou empréstimo!" });
     }
 
-    // cria o empréstimo, tudo OK
+    // CRIA O EMPRÉSTIMO
     const updatedClient = await foundedClient.update({
-      initial: foundedClient.initial + initial,
-      portion: portion,
+      initial: amount,
+      total: amount - paid,
       paid: paid,
+      portion: portion,
     });
 
     if (!updatedClient) {

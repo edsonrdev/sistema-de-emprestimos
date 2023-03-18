@@ -16,9 +16,10 @@ class MovementController {
     const { clientId, amount, type } = req.body;
 
     if (!clientId || !amount || !type) {
-      return res
-        .status(422)
-        .json({ message: "ID do cliente, Valor e Tipo são obrigatórios!" });
+      return res.status(422).json({
+        message:
+          "ID do Cliente, Valor e Tipo de Movimentação são obrigatórios!",
+      });
     }
 
     const foundedClient = await Client.findByPk(clientId);
@@ -27,53 +28,56 @@ class MovementController {
       return res.status(422).json({ message: "Cliente não encontrado!" });
     }
 
-    if (!(foundedClient?.initial > 0 || foundedClient?.movements?.[0])) {
+    // NÃO DEIXAR CRIAR MOVIMENTAÇÃO SE O CLIENTE AINDA TEM UM EMPRÉSTIMO
+    if (foundedClient?.initial === 0) {
       return res
         .status(422)
         .json({ message: "Erro! Contrate um empréstimo antes!" });
     }
 
-    if (foundedClient.paid === foundedClient.initial && type === "input") {
+    // NÃO DEIXA O CLIENTE EFETUAR UM PAGAMENTO SE ELE NÃO TEM MAIS DÉBITO ALGUM
+    if (foundedClient?.remainder === 0 && type === "input") {
       return res
         .status(422)
-        .json({ message: "Erro! O cliente não tem débitos!" });
+        .json({ message: "Erro! Cliente já quitou todos os débitos!" });
     }
 
+    // NÃO EFETUA UM PAGAMENTO CUJO VALOR SEJA MAIOR QUE O DÉBITO
     if (amount > foundedClient.remainder && type === "input") {
       return res.status(422).json({
-        message: "Erro! O débito é menor que o valor informado para abate!",
+        message:
+          "Erro! Valor informado para abate é maior que o débito do cliente!",
       });
     }
 
-    // create new movement
+    // create new movement (OKKKKK)
     const createdMovement = await Movement.create({
       clientId,
       amount,
       type,
 
+      previous: foundedClient?.total - foundedClient?.paid,
+      interest: (foundedClient?.total - foundedClient?.paid) * 0.1,
       remainder:
         type === "input"
-          ? foundedClient?.remainder - amount
-          : foundedClient?.remainder + amount,
-      previousDebit: foundedClient?.remainder,
-      interest: foundedClient?.remainder * 0.1,
-      remainderDebit:
-        type === "input"
-          ? foundedClient?.remainder + foundedClient?.remainder * 0.1 - amount
-          : foundedClient?.remainder + amount,
+          ? foundedClient?.total -
+            foundedClient?.paid +
+            (foundedClient?.total - foundedClient?.paid) * 0.1 -
+            amount
+          : foundedClient?.total -
+            foundedClient?.paid +
+            (foundedClient?.total - foundedClient?.paid) * 0.1 +
+            amount,
     });
 
     // updated client
     const updatedClient = await foundedClient.update({
-      initial:
-        type === "output"
-          ? foundedClient.initial + amount
-          : foundedClient.initial,
-      paid: type === "input" ? foundedClient.paid + amount : foundedClient.paid,
-      remainder:
+      total:
         type === "input"
-          ? foundedClient.initial - amount
-          : foundedClient.initial + amount,
+          ? foundedClient?.total - amount
+          : foundedClient?.total + amount,
+      paid: 0,
+      remainder: createdMovement?.remainder,
     });
 
     if (!createdMovement) {

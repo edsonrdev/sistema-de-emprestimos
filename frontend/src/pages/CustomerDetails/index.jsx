@@ -149,7 +149,7 @@ export const CustomerDetails = () => {
                         <tr key={mov.id}>
                           <td>{convertDate(mov?.createdAt)}</td>
 
-                          <td>{convertToRealBR(mov?.previousDebit)}</td>
+                          <td>{convertToRealBR(mov?.previous)}</td>
                           <td>{convertToRealBR(mov.interest)}</td>
                           <td
                             className={
@@ -161,8 +161,8 @@ export const CustomerDetails = () => {
                           {/* <td>{convertToRealBR(mov.remainder)}</td> */}
                           <td>
                             {mov.type === "input"
-                              ? `${mov.previousDebit} + ${mov.interest} - ${mov.amount} = ${mov.remainderDebit}`
-                              : `${mov.previousDebit} + ${mov.amount} = ${mov.remainderDebit}`}
+                              ? `${mov.previous} + ${mov.interest} - ${mov.amount} = ${mov.remainder}`
+                              : `${mov.previous} + ${mov.amount} = ${mov.remainder}`}
                           </td>
                         </tr>
                       ))}
@@ -171,31 +171,6 @@ export const CustomerDetails = () => {
                 )}
 
                 <aside>
-                  <form className="form-change-total">
-                    <input
-                      ref={desiredAmountRef}
-                      type="number"
-                      min={1}
-                      step={0.01}
-                      placeholder="Digite o valor desejado"
-                    />
-                    <div className="buttons">
-                      <Button
-                        onClick={handleInputAmount}
-                        text="Abater valor"
-                        type="button"
-                        typeUIButton="default"
-                      />
-
-                      <Button
-                        onClick={handleOutputAmount}
-                        text="Pegar adicional"
-                        type="button"
-                        typeUIButton="default"
-                      />
-                    </div>
-                  </form>
-
                   <div className="current-loan-data">
                     <header>Resumo do empréstimo</header>
                     <ul>
@@ -226,11 +201,38 @@ export const CustomerDetails = () => {
                       <li>
                         <span className="data-title">Total restante:</span>
                         <span className="data-value">
-                          {convertToRealBR(customer?.remainder)}
+                          {convertToRealBR(
+                            customer?.remainder + totalAdditional
+                          )}
                         </span>
                       </li>
                     </ul>
                   </div>
+
+                  <form className="form-change-total">
+                    <input
+                      ref={desiredAmountRef}
+                      type="number"
+                      min={1}
+                      step={0.01}
+                      placeholder="Digite o valor desejado"
+                    />
+                    <div className="buttons">
+                      <Button
+                        onClick={handleInputAmount}
+                        text="Abater valor"
+                        type="button"
+                        typeUIButton="default"
+                      />
+
+                      <Button
+                        onClick={handleOutputAmount}
+                        text="Pegar adicional"
+                        type="button"
+                        typeUIButton="default"
+                      />
+                    </div>
+                  </form>
                 </aside>
               </div>
             </>

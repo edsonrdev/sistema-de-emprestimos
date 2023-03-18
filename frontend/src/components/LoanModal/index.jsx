@@ -26,7 +26,7 @@ export const LoanModal = ({
   const [isOldLoan, setIsOldLoan] = useState(false);
 
   const schema = yup.object().shape({
-    initial: yup.string().required("O VALOR INICIAL é obrigatório!"),
+    amount: yup.string().required("O VALOR INICIAL é obrigatório!"),
     portion: yup.string().required("O VALOR DA PARCELA é obrigatório!"),
 
     ...(isOldLoan && {
@@ -43,9 +43,9 @@ export const LoanModal = ({
   !isOldLoan && delete errors?.paid?.message;
 
   const submitCallback = async (data) => {
-    let { clientId, initial, portion } = data;
+    let { clientId, amount, portion } = data;
     clientId = Number(clientId);
-    initial = Number(initial);
+    amount = Number(amount);
     portion = Number(portion);
 
     let paid = data.paid === undefined ? null : data.paid;
@@ -53,7 +53,7 @@ export const LoanModal = ({
 
     const loanData = {
       clientId,
-      initial,
+      amount,
       portion,
       paid,
     };
@@ -87,18 +87,16 @@ export const LoanModal = ({
                 {...register("clientId")}
               />
               <div className="form-group">
-                <label htmlFor="initial">
-                  Valor inicial do empréstimo (R$):
-                </label>
+                <label htmlFor="amount">Valor do empréstimo (R$):</label>
                 <input
                   type="number"
                   min="1"
                   step="0.01"
-                  id="initial"
+                  id="amount"
                   placeholder="2.000,00"
-                  {...register("initial")}
+                  {...register("amount")}
                 />
-                <span className="error">{errors.initial?.message}</span>
+                <span className="error">{errors.amount?.message}</span>
               </div>
 
               <div className="form-group">
