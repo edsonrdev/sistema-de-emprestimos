@@ -105,6 +105,11 @@ export const CustomerDetails = () => {
           <div className="page-title">
             <h2>Cliente: {customer.name}</h2>
 
+            <h2>
+              Valor da parcela:{" "}
+              <span>{convertToRealBR(customer?.portion)}</span>
+            </h2>
+
             <Button
               text="Voltar"
               type="button"
@@ -112,6 +117,8 @@ export const CustomerDetails = () => {
               onClick={() => history.push("/clients")}
             />
           </div>
+
+          <hr />
 
           {customer.initial === 0 && customer?.movements?.length === 0 ? (
             <div className="hire-loan">
@@ -124,132 +131,124 @@ export const CustomerDetails = () => {
               />
             </div>
           ) : (
-            <>
-              <div className="loan-input-values">
-                <h3>
-                  Valor da parcela:{" "}
-                  <span>{convertToRealBR(customer?.portion)}</span>
-                </h3>
-              </div>
+            <div className="data-loan">
+              {customer?.movements?.length > 0 && (
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Data</th>
+                      <th>Anterior</th>
+                      <th>10%</th>
+                      <th>Valor</th>
+                      <th>Restante</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {customer?.movements.map((mov) => (
+                      <tr key={mov.id}>
+                        <td>{convertDate(mov?.createdAt)}</td>
 
-              <div className="data-loan">
-                {customer?.movements?.length > 0 && (
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Data</th>
-                        <th>Anterior</th>
-                        <th>Juros (10%)</th>
-                        <th>Valor</th>
-                        <th>Restante</th>
+                        <td>{convertToRealBR(mov?.previous)}</td>
+                        <td>{convertToRealBR(mov.interest)}</td>
+                        <td
+                          className={mov.type === "input" ? "input" : "output"}
+                        >
+                          {convertToRealBR(mov.amount)}
+                        </td>
+                        {/* <td>{convertToRealBR(mov.remainder)}</td> */}
+                        <td>
+                          {mov.type === "input"
+                            ? `${convertToRealBR(
+                                mov.previous
+                              )} + ${convertToRealBR(
+                                mov.interest
+                              )} - ${convertToRealBR(
+                                mov.amount
+                              )} = ${convertToRealBR(mov.remainder)}`
+                            : `${convertToRealBR(
+                                mov.previous
+                              )} + ${convertToRealBR(
+                                mov.interest
+                              )} + ${convertToRealBR(
+                                mov.amount
+                              )} = ${convertToRealBR(mov.remainder)}`}
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {customer?.movements.map((mov) => (
-                        <tr key={mov.id}>
-                          <td>{convertDate(mov?.createdAt)}</td>
+                    ))}
+                  </tbody>
+                </table>
+              )}
 
-                          <td>{convertToRealBR(mov?.previous)}</td>
-                          <td>{convertToRealBR(mov.interest)}</td>
-                          <td
-                            className={
-                              mov.type === "input" ? "input" : "output"
-                            }
-                          >
-                            {convertToRealBR(mov.amount)}
-                          </td>
-                          {/* <td>{convertToRealBR(mov.remainder)}</td> */}
-                          <td>
-                            {mov.type === "input"
-                              ? `${convertToRealBR(
-                                  mov.previous
-                                )} + ${convertToRealBR(
-                                  mov.interest
-                                )} - ${convertToRealBR(
-                                  mov.amount
-                                )} = ${convertToRealBR(mov.remainder)}`
-                              : `${convertToRealBR(
-                                  mov.previous
-                                )} + ${convertToRealBR(
-                                  mov.interest
-                                )} + ${convertToRealBR(
-                                  mov.amount
-                                )} = ${convertToRealBR(mov.remainder)}`}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
+              <aside>
+                <div className="current-loan-data">
+                  <header>Resumo do empréstimo</header>
+                  <ul>
+                    <li>
+                      <span className="data-title">
+                        Valor inicial contratado:
+                      </span>
+                      <span className="data-value">
+                        {convertToRealBR(customer?.initial)}
+                      </span>
+                    </li>
+                    <li>
+                      <span className="data-title">Valor inicial abatido:</span>
+                      <span className="data-value">
+                        {convertToRealBR(customer?.paid)}
+                      </span>
+                    </li>
 
-                <aside>
-                  <div className="current-loan-data">
-                    <header>Resumo do empréstimo</header>
-                    <ul>
-                      <li>
-                        <span className="data-title">Contratado inicial:</span>
-                        <span className="data-value">
-                          {convertToRealBR(customer?.initial)}
-                        </span>
-                      </li>
-                      <li>
-                        <span className="data-title">Abatido inicial:</span>
-                        <span className="data-value">
-                          {convertToRealBR(customer?.paid)}
-                        </span>
-                      </li>
-                      <li>
-                        <span className="data-title">Total abatido:</span>
-                        <span className="data-value">
-                          {/* {convertToRealBR(customer?.paid)} */}
-                          {convertToRealBR(totalPaid)}
-                        </span>
-                      </li>
-                      <li>
-                        <span className="data-title">
-                          Total pego adicional:
-                        </span>
-                        <span className="data-value">
-                          {convertToRealBR(totalAdditional)}
-                        </span>
-                      </li>
+                    <li>
+                      <span className="data-title">
+                        Valor adicional contratdo:
+                      </span>
+                      <span className="data-value">
+                        {convertToRealBR(totalAdditional)}
+                      </span>
+                    </li>
 
-                      <li>
-                        <span className="data-title">Total restante:</span>
-                        <span className="data-value">
-                          {convertToRealBR(customer?.total)}
-                        </span>
-                      </li>
-                    </ul>
-                  </div>
+                    <li>
+                      <span className="data-title">Valor total abatido:</span>
+                      <span className="data-value">
+                        {convertToRealBR(totalPaid)}
+                      </span>
+                    </li>
 
-                  <form className="form-change-total">
-                    <input
-                      ref={desiredAmountRef}
-                      type="number"
-                      min={1}
-                      step={0.01}
-                      placeholder="Digite o valor desejado"
+                    <li>
+                      <span className="data-title">Valor total restante:</span>
+                      <span className="data-value">
+                        {convertToRealBR(customer?.total)}
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+
+                <form className="form-change-total">
+                  <input
+                    ref={desiredAmountRef}
+                    type="number"
+                    min={1}
+                    step={0.01}
+                    placeholder="Digite o valor desejado"
+                  />
+                  <div className="buttons">
+                    <Button
+                      onClick={handleInputAmount}
+                      text="Abater valor"
+                      type="button"
+                      typeUIButton="default"
                     />
-                    <div className="buttons">
-                      <Button
-                        onClick={handleInputAmount}
-                        text="Abater valor"
-                        type="button"
-                        typeUIButton="default"
-                      />
 
-                      <Button
-                        onClick={handleOutputAmount}
-                        text="Pegar adicional"
-                        type="button"
-                        typeUIButton="default"
-                      />
-                    </div>
-                  </form>
-                </aside>
-              </div>
-            </>
+                    <Button
+                      onClick={handleOutputAmount}
+                      text="Pegar adicional"
+                      type="button"
+                      typeUIButton="default"
+                    />
+                  </div>
+                </form>
+              </aside>
+            </div>
           )}
         </div>
       </main>

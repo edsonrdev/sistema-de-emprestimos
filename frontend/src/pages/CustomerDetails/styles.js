@@ -43,10 +43,10 @@ export const Container = styled.div`
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin: 20px 0;
+      /* background-color: red; */
 
-      > h2 {
-        margin-top: 20px;
-        margin-bottom: 26px;
+      h2:nth-of-type(1) {
         padding-left: 16px;
 
         color: var(--gray);
@@ -56,6 +56,19 @@ export const Container = styled.div`
         line-height: 44px;
 
         border-left: 7px solid var(--primary);
+      }
+
+      h2:nth-of-type(2) {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        /* background-color: red; */
+
+        span {
+          font-size: 18px;
+          color: var(--red);
+          font-weight: 600;
+        }
       }
 
       .show-disabled {
@@ -70,6 +83,11 @@ export const Container = styled.div`
       }
     }
 
+    hr {
+      margin-bottom: 20px;
+      border: 1px solid #555;
+    }
+
     .hire-loan {
       display: flex;
       flex-direction: column;
@@ -82,24 +100,6 @@ export const Container = styled.div`
       align-items: center;
       justify-content: space-between;
       margin-bottom: 16px;
-
-      h3 {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-
-        font-family: "Inter";
-        font-style: normal;
-        font-weight: 400;
-        font-size: 16px;
-        line-height: 48px;
-
-        span {
-          font-size: 18px;
-          color: var(--red);
-          font-weight: 600;
-        }
-      }
     }
 
     .data-loan {
@@ -131,16 +131,6 @@ export const Container = styled.div`
             font-weight: 700;
             text-align: left;
             border-right: 1px solid rgba(255, 255, 255, 0.25);
-
-            &:nth-of-type(1) {
-              width: 30px;
-            }
-            &:nth-of-type(2) {
-              width: 145px;
-            }
-            &:nth-of-type(3) {
-              width: 125px;
-            }
           }
         }
 
@@ -256,9 +246,9 @@ export const Container = styled.div`
               display: flex;
               justify-content: space-between;
 
-              &:last-of-type .data-value {
-                font-weight: 700;
-                color: var(--red);
+              &:last-of-type {
+                font-size: 20px;
+                color: var(--primary-light);
               }
             }
 

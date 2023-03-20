@@ -36,18 +36,29 @@ class MovementController {
     }
 
     // NÃO DEIXA O CLIENTE EFETUAR UM PAGAMENTO SE ELE NÃO TEM MAIS DÉBITO ALGUM
-    if (foundedClient?.remainder === 0 && type === "input") {
+    if (foundedClient?.total === 0 && type === "input") {
       return res
         .status(422)
         .json({ message: "Erro! Cliente já quitou todos os débitos!" });
     }
 
     // NÃO EFETUA UM PAGAMENTO CUJO VALOR SEJA MAIOR QUE O DÉBITO
-    if (amount > foundedClient.remainder && type === "input") {
+    if (amount > foundedClient.total && type === "input") {
       return res.status(422).json({
         message:
           "Erro! Valor informado para abate é maior que o débito do cliente!",
       });
+    }
+
+    let movementRemainder;
+    let clientTotal;
+
+    if (type === "input" && amount === foundedClient.total) {
+      movementRemainder = 0;
+    } else if (type === "input") {
+      movementRemainder = foundedClient.total * 1.1 - amount;
+    } else {
+      movementRemainder = foundedClient.total * 1.1 + amount;
     }
 
     // create new movement (OKKKKK)
@@ -56,20 +67,31 @@ class MovementController {
       amount,
       type,
 
-      previous: foundedClient.total,
-      interest: foundedClient.total * 0.1,
-      remainder:
-        type === "input"
-          ? foundedClient.total * 1.1 - amount
-          : foundedClient.total * 1.1 + amount,
+      previous: foundedClient.total.toFixed(2),
+      interest: (foundedClient.total * 0.1).toFixed(2),
+      remainder: movementRemainder.toFixed(2),
     });
+
+    if (type === "input" && amount === foundedClient.total) {
+      clientTotal = 0;
+    } else if (type === "input") {
+      clientTotal = foundedClient.total * 1.1 - amount;
+    } else {
+      clientTotal = foundedClient.total * 1.1 + amount;
+    }
 
     // updated client
     const updatedClient = await foundedClient.update({
-      total:
-        type === "input"
-          ? foundedClient.total * 1.1 - amount
-          : foundedClient.total * 1.1 + amount,
+      paid:
+        type === "input" && amount === foundedClient.total
+          ? foundedClient.total + amount
+          : foundedClient.paid,
+      total: clientTotal.toFixed(2),
+      // total:
+      //   type === "input"
+      //     ? foundedClient.total * 1.1 - amount
+      //     : foundedClient.total * 1.1 + amount,
+
       // paid: type === "input" ? foundedClient.paid + amount : foundedClient.paid,
     });
 

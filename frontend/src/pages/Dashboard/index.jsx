@@ -15,9 +15,27 @@ import { convertToRealBR } from "../../helpers/convertToRealBR";
 export const Dashboard = () => {
   const [clients, setClients] = useState([]);
 
-  const borrowedTotal = clients.reduce((acc, client) => acc + client.total, 0);
+  // EMPRESTADO TOTAL = EMPRESTADO INICIAL + TODOS OS EMPRESTADOS ADICIONAIS
+  const borrowedTotal =
+    clients.reduce((acc, client) => acc + client.initial, 0) +
+    clients
+      ?.filter((client) => client.movements?.length !== 0)
+      ?.map((client) => client?.movements)[0]
+      ?.filter((mov) => mov?.type === "output")
+      ?.reduce((acc, movement) => acc + movement.amount, 0);
 
-  const receivedTotal = clients.reduce((acc, client) => acc + client.paid, 0);
+  // console.log(clients);
+  // console.log(borrowedTotal);
+
+  const receivedTotal =
+    clients.reduce((acc, client) => acc + client.paid, 0) +
+    clients
+      ?.filter((client) => client.movements?.length !== 0)
+      ?.map((client) => client?.movements)[0]
+      ?.filter((mov) => mov?.type === "input")
+      ?.reduce((acc, movement) => acc + movement.amount, 0);
+
+  console.log(receivedTotal);
 
   const remainderTotal = borrowedTotal - receivedTotal;
 
@@ -43,18 +61,21 @@ export const Dashboard = () => {
               <span className="title">Emprestado (total)</span>
               <img src={BorrowedIcon} alt="Emprestado (total)" />
               <span className="price">{convertToRealBR(borrowedTotal)}</span>
+              {/* <span className="price">{convertToRealBR(0)}</span> */}
             </div>
 
             <div className="card">
               <span className="title">Recebido (total)</span>
               <img src={ReceivedIcon} alt="Recebido (total)" />
-              <span className="price">{convertToRealBR(receivedTotal)}</span>
+              {/* <span className="price">{convertToRealBR(receivedTotal)}</span> */}
+              <span className="price">{convertToRealBR(0)}</span>
             </div>
 
             <div className="card">
               <span className="title">A receber (total)</span>
               <img src={ToReceiveIcon} alt="A receber (total)" />
-              <span className="price">{convertToRealBR(remainderTotal)}</span>
+              {/* <span className="price">{convertToRealBR(remainderTotal)}</span> */}
+              <span className="price">{convertToRealBR(0)}</span>
             </div>
 
             <div className="card">
