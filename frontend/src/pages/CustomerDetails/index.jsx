@@ -138,10 +138,10 @@ export const CustomerDetails = () => {
                     <thead>
                       <tr>
                         <th>Data</th>
-                        <th>Dívida anterior</th>
+                        <th>Anterior</th>
                         <th>Juros (10%)</th>
                         <th>Valor</th>
-                        <th>Dívida restante</th>
+                        <th>Restante</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -161,8 +161,20 @@ export const CustomerDetails = () => {
                           {/* <td>{convertToRealBR(mov.remainder)}</td> */}
                           <td>
                             {mov.type === "input"
-                              ? `${mov.previous} + ${mov.interest} - ${mov.amount} = ${mov.remainder}`
-                              : `${mov.previous} + ${mov.amount} = ${mov.remainder}`}
+                              ? `${convertToRealBR(
+                                  mov.previous
+                                )} + ${convertToRealBR(
+                                  mov.interest
+                                )} - ${convertToRealBR(
+                                  mov.amount
+                                )} = ${convertToRealBR(mov.remainder)}`
+                              : `${convertToRealBR(
+                                  mov.previous
+                                )} + ${convertToRealBR(
+                                  mov.interest
+                                )} + ${convertToRealBR(
+                                  mov.amount
+                                )} = ${convertToRealBR(mov.remainder)}`}
                           </td>
                         </tr>
                       ))}
@@ -175,11 +187,15 @@ export const CustomerDetails = () => {
                     <header>Resumo do empréstimo</header>
                     <ul>
                       <li>
-                        <span className="data-title">
-                          Contratado inicialmente:
-                        </span>
+                        <span className="data-title">Contratado inicial:</span>
                         <span className="data-value">
                           {convertToRealBR(customer?.initial)}
+                        </span>
+                      </li>
+                      <li>
+                        <span className="data-title">Abatido inicial:</span>
+                        <span className="data-value">
+                          {convertToRealBR(customer?.paid)}
                         </span>
                       </li>
                       <li>
@@ -191,7 +207,7 @@ export const CustomerDetails = () => {
                       </li>
                       <li>
                         <span className="data-title">
-                          Total pego adicionalmente:
+                          Total pego adicional:
                         </span>
                         <span className="data-value">
                           {convertToRealBR(totalAdditional)}
@@ -201,9 +217,7 @@ export const CustomerDetails = () => {
                       <li>
                         <span className="data-title">Total restante:</span>
                         <span className="data-value">
-                          {convertToRealBR(
-                            customer?.remainder + totalAdditional
-                          )}
+                          {convertToRealBR(customer?.total)}
                         </span>
                       </li>
                     </ul>

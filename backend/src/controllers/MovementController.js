@@ -56,28 +56,21 @@ class MovementController {
       amount,
       type,
 
-      previous: foundedClient?.total - foundedClient?.paid,
-      interest: (foundedClient?.total - foundedClient?.paid) * 0.1,
+      previous: foundedClient.total,
+      interest: foundedClient.total * 0.1,
       remainder:
         type === "input"
-          ? foundedClient?.total -
-            foundedClient?.paid +
-            (foundedClient?.total - foundedClient?.paid) * 0.1 -
-            amount
-          : foundedClient?.total -
-            foundedClient?.paid +
-            (foundedClient?.total - foundedClient?.paid) * 0.1 +
-            amount,
+          ? foundedClient.total * 1.1 - amount
+          : foundedClient.total * 1.1 + amount,
     });
 
     // updated client
     const updatedClient = await foundedClient.update({
       total:
         type === "input"
-          ? foundedClient?.total - amount
-          : foundedClient?.total + amount,
-      paid: 0,
-      remainder: createdMovement?.remainder,
+          ? foundedClient.total * 1.1 - amount
+          : foundedClient.total * 1.1 + amount,
+      // paid: type === "input" ? foundedClient.paid + amount : foundedClient.paid,
     });
 
     if (!createdMovement) {

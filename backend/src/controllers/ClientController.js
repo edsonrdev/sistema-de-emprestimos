@@ -160,12 +160,12 @@ class ClientController {
         .json({ message: "Erro! Este cliente já contratou empréstimo!" });
     }
 
-    // CRIA O EMPRÉSTIMO
+    // CRIA O EMPRÉSTIMO (SETA OS VALORES P/ CADA ATRIBUTO)
     const updatedClient = await foundedClient.update({
       initial: amount,
       total: amount - paid,
-      paid: paid,
       portion: portion,
+      paid: paid,
     });
 
     if (!updatedClient) {

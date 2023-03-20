@@ -104,18 +104,21 @@ export const Container = styled.div`
 
     .data-loan {
       display: flex;
+      flex-direction: column;
       gap: 16px;
-      justify-content: flex-end;
+      /* justify-content: flex-end; */
+      /* background: red; */
 
       table {
-        flex: 1;
-        align-self: flex-start;
+        flex: 1 1 auto;
+        order: 2;
         color: var(--gray-dark);
         /* width: 100%; */
         background: #eee;
         border-radius: 5px;
         border-spacing: 0;
         overflow: hidden;
+        border: 2px solid var(--primary);
 
         thead {
           height: 52px !important;
@@ -124,9 +127,20 @@ export const Container = styled.div`
           th {
             color: var(--white);
             padding: 10px;
-            font-size: 18px;
+            font-size: 17px;
+            font-weight: 700;
             text-align: left;
             border-right: 1px solid rgba(255, 255, 255, 0.25);
+
+            &:nth-of-type(1) {
+              width: 30px;
+            }
+            &:nth-of-type(2) {
+              width: 145px;
+            }
+            &:nth-of-type(3) {
+              width: 125px;
+            }
           }
         }
 
@@ -150,19 +164,23 @@ export const Container = styled.div`
       }
 
       aside {
-        flex-basis: 360px;
-        align-self: flex-start;
+        /* flex-basis: 360px;
+        align-self: flex-start; */
 
         display: flex;
-        flex-direction: column;
+        align-items: flex-start;
+        /* flex-direction: column; */
         gap: 16px;
 
         .form-change-total {
           display: flex;
+          flex: 1;
           flex-direction: column;
           /* overflow: hidden; */
           border-radius: 5px;
-          border: 2px solid var(--gray-dark);
+          padding: 16px;
+          border: 2px solid var(--primary);
+          background: var(--primary-dark);
 
           input {
             height: 50px;
@@ -212,6 +230,7 @@ export const Container = styled.div`
         }
 
         .current-loan-data {
+          flex: 1;
           overflow: hidden;
           border-radius: 5px;
           border: 2px solid var(--primary);
@@ -219,6 +238,8 @@ export const Container = styled.div`
           header {
             height: 50px;
             padding: 0 16px;
+            font-size: 17px;
+            font-weight: 700;
           }
 
           ul {
@@ -231,6 +252,7 @@ export const Container = styled.div`
             background: #eee;
 
             li {
+              font-size: 14px;
               display: flex;
               justify-content: space-between;
 
@@ -240,12 +262,8 @@ export const Container = styled.div`
               }
             }
 
-            span {
-              font-size: 15px;
-
-              &.data-title {
-                font-weight: 700;
-              }
+            span.data-title {
+              font-weight: 700;
             }
           }
         }

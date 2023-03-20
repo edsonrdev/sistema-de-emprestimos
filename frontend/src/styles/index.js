@@ -38,7 +38,7 @@ export const GlobalStyle = createGlobalStyle`
 
    .container {
       width: 100%;
-      max-width: 1080px;
+      max-width: 968px;
       margin: auto;
       /* background: #555 */
    }
