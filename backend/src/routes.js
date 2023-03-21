@@ -20,6 +20,7 @@ routes.post("/clients", ClientController.create);
 routes.put("/clients/:id", ClientController.update);
 routes.patch("/clients/inactivate/:id", ClientController.inactivate);
 routes.post("/clients/loan", ClientController.createLoan);
+routes.patch("/clients/rate", ClientController.updateInterestRate);
 
 // movement routes
 routes.get("/movements", MovementController.findAll);

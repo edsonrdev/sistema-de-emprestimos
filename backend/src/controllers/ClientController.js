@@ -141,7 +141,7 @@ class ClientController {
 
     if (!clientId || !amount || !portion) {
       return res.status(422).json({
-        message: "ID, Empréstimo e Parcela são obrigatórios!",
+        message: "Cliente, Empréstimo e Parcela são obrigatórios!",
       });
     }
 
@@ -154,7 +154,7 @@ class ClientController {
     }
 
     // SE O CLIENTE JÁ TEM EMPRÉSIMO, NÃO DEIXA CRIAR OUTRO!
-    if (foundedClient?.initial || foundedClient?.movements?.[0]) {
+    if (foundedClient?.totalInitial || foundedClient?.movements?.[0]) {
       return res
         .status(422)
         .json({ message: "Erro! Este cliente já contratou empréstimo!" });
@@ -162,15 +162,51 @@ class ClientController {
 
     // CRIA O EMPRÉSTIMO (SETA OS VALORES P/ CADA ATRIBUTO)
     const updatedClient = await foundedClient.update({
-      initial: amount,
+      totalInitial: amount,
       total: amount - paid,
-      portion: portion,
+      paidInitial: paid,
       paid: paid,
+      portion: portion,
     });
 
     if (!updatedClient) {
       return res.status(500).json({
         message: "Erro ao contratar empréstimo!",
+      });
+    }
+
+    return res.status(201).json(updatedClient);
+  }
+
+  // ATUALIZA O VALOR DA TAXA DO EMPRÉSTIMO
+  static async updateInterestRate(req, res) {
+    const { clientId, interestRate } = req.body;
+
+    if (!clientId || !interestRate) {
+      return res.status(422).json({
+        message: "Cliente e Taxa são obrigatórios!",
+      });
+    }
+
+    const foundedClient = await Client.findByPk(clientId);
+
+    if (!foundedClient) {
+      return res.status(422).json({ message: "Cliente não encontrado!" });
+    }
+
+    if (interestRate < 1 || interestRate > 100) {
+      return res.status(422).json({
+        message: "Taxa está fora do intervalo aceitável!",
+      });
+    }
+
+    const updatedClient = await foundedClient.update({
+      interestRate: interestRate / 100,
+    });
+
+    if (!updatedClient) {
+      return res.status(500).json({
+        message: "Erro ao atualizar cliente!",
       });
     }
 

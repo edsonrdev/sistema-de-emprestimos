@@ -29,21 +29,21 @@ class MovementController {
     }
 
     // NÃO DEIXAR CRIAR MOVIMENTAÇÃO SE O CLIENTE AINDA TEM UM EMPRÉSTIMO
-    if (foundedClient?.initial === 0) {
+    if (foundedClient?.totalInitial === 0) {
       return res
         .status(422)
         .json({ message: "Erro! Contrate um empréstimo antes!" });
     }
 
     // NÃO DEIXA O CLIENTE EFETUAR UM PAGAMENTO SE ELE NÃO TEM MAIS DÉBITO ALGUM
-    if (foundedClient?.total === 0 && type === "input") {
+    if (type === "input" && foundedClient?.total === 0) {
       return res
         .status(422)
         .json({ message: "Erro! Cliente já quitou todos os débitos!" });
     }
 
     // NÃO EFETUA UM PAGAMENTO CUJO VALOR SEJA MAIOR QUE O DÉBITO
-    if (amount > foundedClient.total && type === "input") {
+    if (type === "input" && amount > foundedClient.total) {
       return res.status(422).json({
         message:
           "Erro! Valor informado para abate é maior que o débito do cliente!",
@@ -53,46 +53,53 @@ class MovementController {
     let movementRemainder;
     let clientTotal;
 
-    if (type === "input" && amount === foundedClient.total) {
-      movementRemainder = 0;
-    } else if (type === "input") {
-      movementRemainder = foundedClient.total * 1.1 - amount;
+    if (type === "input") {
+      if (amount === foundedClient.total) {
+        movementRemainder = 0;
+      } else {
+        movementRemainder =
+          foundedClient.total +
+          foundedClient.total * foundedClient.interestRate -
+          amount;
+      }
     } else {
-      movementRemainder = foundedClient.total * 1.1 + amount;
+      movementRemainder =
+        foundedClient.total +
+        foundedClient.total * foundedClient.interestRate +
+        amount;
     }
 
-    // create new movement (OKKKKK)
+    // CRIA NOVA MOVIMENTAÇÃO
     const createdMovement = await Movement.create({
       clientId,
       amount,
       type,
 
       previous: foundedClient.total.toFixed(2),
-      interest: (foundedClient.total * 0.1).toFixed(2),
+      interest: (foundedClient.total * foundedClient.interestRate).toFixed(2),
       remainder: movementRemainder.toFixed(2),
+      interestRatePrevious: foundedClient.interestRate,
     });
 
-    if (type === "input" && amount === foundedClient.total) {
-      clientTotal = 0;
-    } else if (type === "input") {
-      clientTotal = foundedClient.total * 1.1 - amount;
+    if (type === "input") {
+      if (amount === foundedClient.total) {
+        clientTotal = 0;
+      } else {
+        clientTotal =
+          foundedClient.total +
+          foundedClient.total * foundedClient.interestRate -
+          amount;
+      }
     } else {
-      clientTotal = foundedClient.total * 1.1 + amount;
+      clientTotal =
+        foundedClient.total +
+        foundedClient.total * foundedClient.interestRate +
+        amount;
     }
 
     // updated client
     const updatedClient = await foundedClient.update({
-      paid:
-        type === "input" && amount === foundedClient.total
-          ? foundedClient.total + amount
-          : foundedClient.paid,
       total: clientTotal.toFixed(2),
-      // total:
-      //   type === "input"
-      //     ? foundedClient.total * 1.1 - amount
-      //     : foundedClient.total * 1.1 + amount,
-
-      // paid: type === "input" ? foundedClient.paid + amount : foundedClient.paid,
     });
 
     if (!createdMovement) {

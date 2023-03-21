@@ -2,6 +2,7 @@ import { DataTypes } from "sequelize";
 import connection from "../database/connection.js";
 
 const Client = connection.define("client", {
+  // atributos específicos do cliente
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -21,8 +22,8 @@ const Client = connection.define("client", {
     defaultValue: true,
   },
 
-  // attributes of the loan
-  initial: {
+  // atributos do empréstimo do cliente
+  totalInitial: {
     type: DataTypes.FLOAT,
     defaultValue: 0,
   },
@@ -30,13 +31,21 @@ const Client = connection.define("client", {
     type: DataTypes.FLOAT,
     defaultValue: 0,
   },
-  portion: {
+  paidInitial: {
     type: DataTypes.FLOAT,
     defaultValue: 0,
   },
   paid: {
     type: DataTypes.FLOAT,
     defaultValue: 0,
+  },
+  portion: {
+    type: DataTypes.FLOAT,
+    defaultValue: 0,
+  },
+  interestRate: {
+    type: DataTypes.FLOAT,
+    defaultValue: 0.1,
   },
 });
 

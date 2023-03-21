@@ -17,27 +17,27 @@ export const Dashboard = () => {
 
   // EMPRESTADO TOTAL = EMPRESTADO INICIAL + TODOS OS EMPRESTADOS ADICIONAIS
   const borrowedTotal =
-    clients.reduce((acc, client) => acc + client.initial, 0) +
+    clients.reduce((acc, client) => acc + client.totalInitial, 0) +
     clients
       ?.filter((client) => client.movements?.length !== 0)
       ?.map((client) => client?.movements)[0]
       ?.filter((mov) => mov?.type === "output")
       ?.reduce((acc, movement) => acc + movement.amount, 0);
 
-  // console.log(clients);
-  // console.log(borrowedTotal);
 
-  const receivedTotal =
-    clients.reduce((acc, client) => acc + client.paid, 0) +
-    clients
-      ?.filter((client) => client.movements?.length !== 0)
-      ?.map((client) => client?.movements)[0]
-      ?.filter((mov) => mov?.type === "input")
-      ?.reduce((acc, movement) => acc + movement.amount, 0);
+  const totalTest = 
+    clients.reduce((acc, client) => acc + client.totalInitial, 0)
 
-  console.log(receivedTotal);
+  const totalInitialAllClients = clients.reduce(
+    (acc, client) => acc + client.totalInitial,
+    0
+  );
 
-  const remainderTotal = borrowedTotal - receivedTotal;
+  const withMovements = clients.filter(
+    (client) => client.movements.length !== 0
+  );
+
+  console.log(borrowedTotal);
 
   const getClients = async () => {
     const res = await api.get("/clients");
@@ -60,7 +60,7 @@ export const Dashboard = () => {
             <div className="card">
               <span className="title">Emprestado (total)</span>
               <img src={BorrowedIcon} alt="Emprestado (total)" />
-              <span className="price">{convertToRealBR(borrowedTotal)}</span>
+              <span className="price">{convertToRealBR(0)}</span>
               {/* <span className="price">{convertToRealBR(0)}</span> */}
             </div>
 

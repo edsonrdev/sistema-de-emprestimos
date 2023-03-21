@@ -30,6 +30,11 @@ const Movement = connection.define("movement", {
     allowNull: false,
     required: true,
   },
+  interestRatePrevious: {
+    type: DataTypes.FLOAT,
+    allowNull: false,
+    required: true,
+  },
 });
 
 Client.hasMany(Movement);

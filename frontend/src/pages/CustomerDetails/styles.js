@@ -109,9 +109,13 @@ export const Container = styled.div`
       /* justify-content: flex-end; */
       /* background: red; */
 
+      hr {
+        margin: 0;
+      }
+
       table {
         flex: 1 1 auto;
-        order: 2;
+        /* order: 2; */
         color: var(--gray-dark);
         /* width: 100%; */
         background: #eee;
@@ -153,7 +157,7 @@ export const Container = styled.div`
         }
       }
 
-      aside {
+      .loan-panel {
         /* flex-basis: 360px;
         align-self: flex-start; */
 
@@ -162,15 +166,15 @@ export const Container = styled.div`
         /* flex-direction: column; */
         gap: 16px;
 
-        .form-change-total {
+        form {
           display: flex;
           flex: 1;
           flex-direction: column;
           /* overflow: hidden; */
           border-radius: 5px;
-          padding: 16px;
+          /* padding: 16px; */
           border: 2px solid var(--primary);
-          background: var(--primary-dark);
+          /* background: var(--primary-dark); */
 
           input {
             height: 50px;
@@ -256,6 +260,13 @@ export const Container = styled.div`
               font-weight: 700;
             }
           }
+        }
+
+        .forms {
+          flex: 0 0 420px;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
         }
       }
     }
