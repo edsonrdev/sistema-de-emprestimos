@@ -16,28 +16,36 @@ export const Dashboard = () => {
   const [clients, setClients] = useState([]);
 
   // EMPRESTADO TOTAL = EMPRESTADO INICIAL + TODOS OS EMPRESTADOS ADICIONAIS
-  const borrowedTotal =
-    clients.reduce((acc, client) => acc + client.totalInitial, 0) +
-    clients
-      ?.filter((client) => client.movements?.length !== 0)
-      ?.map((client) => client?.movements)[0]
-      ?.filter((mov) => mov?.type === "output")
-      ?.reduce((acc, movement) => acc + movement.amount, 0);
+  // const borrowedTotal =
+  //   clients.reduce((acc, client) => acc + client.totalInitial, 0) +
+  //   clients
+  //     ?.filter((client) => client.movements?.length !== 0)
+  //     ?.map((client) => client?.movements)[0]
+  //     ?.filter((mov) => mov?.type === "output")
+  //     ?.reduce((acc, movement) => acc + movement.amount, 0);
 
 
-  const totalTest = 
-    clients.reduce((acc, client) => acc + client.totalInitial, 0)
-
-  const totalInitialAllClients = clients.reduce(
-    (acc, client) => acc + client.totalInitial,
+  const borrowedTotal = clients.reduce(
+    (acc, client, index) =>
+      acc +
+      client.totalInitial +
+      clients[index].movements
+        ?.filter((m) => m.type === "output")
+        .reduce((acc, m) => acc + m.amount, 0),
     0
   );
 
-  const withMovements = clients.filter(
-    (client) => client.movements.length !== 0
+  const receivedTotal = clients.reduce(
+    (acc, client, index) =>
+      acc +
+      client.paid +
+      clients[index].movements
+        ?.filter((m) => m.type === "input")
+        .reduce((acc, m) => acc + m.amount, 0),
+    0
   );
 
-  console.log(borrowedTotal);
+  const toReceive = borrowedTotal - receivedTotal;
 
   const getClients = async () => {
     const res = await api.get("/clients");
@@ -60,22 +68,21 @@ export const Dashboard = () => {
             <div className="card">
               <span className="title">Emprestado (total)</span>
               <img src={BorrowedIcon} alt="Emprestado (total)" />
-              <span className="price">{convertToRealBR(0)}</span>
-              {/* <span className="price">{convertToRealBR(0)}</span> */}
+              <span className="price">{convertToRealBR(borrowedTotal)}</span>
             </div>
 
             <div className="card">
               <span className="title">Recebido (total)</span>
               <img src={ReceivedIcon} alt="Recebido (total)" />
               {/* <span className="price">{convertToRealBR(receivedTotal)}</span> */}
-              <span className="price">{convertToRealBR(0)}</span>
+              <span className="price">{convertToRealBR(receivedTotal)}</span>
             </div>
 
             <div className="card">
               <span className="title">A receber (total)</span>
               <img src={ToReceiveIcon} alt="A receber (total)" />
               {/* <span className="price">{convertToRealBR(remainderTotal)}</span> */}
-              <span className="price">{convertToRealBR(0)}</span>
+              <span className="price">{convertToRealBR(toReceive)}</span>
             </div>
 
             <div className="card">
