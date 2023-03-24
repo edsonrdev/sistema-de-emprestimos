@@ -45,7 +45,14 @@ export const Dashboard = () => {
     0
   );
 
-  const toReceive = borrowedTotal - receivedTotal;
+  const toReceive = clients.reduce(
+    (acc, client, index) => acc + client.movements[0].remainder, 0
+  );
+
+  console.clear();
+  console.log(borrowedTotal);
+  console.log(receivedTotal);
+  console.log(toReceive);
 
   const getClients = async () => {
     const res = await api.get("/clients");
@@ -79,7 +86,7 @@ export const Dashboard = () => {
             </div>
 
             <div className="card">
-              <span className="title">A receber (total)</span>
+              <span className="title">A receber (com juros)</span>
               <img src={ToReceiveIcon} alt="A receber (total)" />
               {/* <span className="price">{convertToRealBR(remainderTotal)}</span> */}
               <span className="price">{convertToRealBR(toReceive)}</span>

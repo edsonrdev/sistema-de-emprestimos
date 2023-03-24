@@ -163,10 +163,11 @@ class ClientController {
     // CRIA O EMPRÉSTIMO (SETA OS VALORES P/ CADA ATRIBUTO)
     const updatedClient = await foundedClient.update({
       totalInitial: amount,
-      total: amount - paid,
+      total: amount * 1.1 - paid,
       paidInitial: paid,
       paid: paid,
       portion: portion,
+      interestRate: 0.1
     });
 
     if (!updatedClient) {
