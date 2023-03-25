@@ -253,6 +253,7 @@ export const CustomerDetails = () => {
                 <table>
                   <thead>
                     <tr>
+                      <th>ID</th>
                       <th>Data</th>
                       <th>Anterior</th>
                       <th>Juro</th>
@@ -263,6 +264,7 @@ export const CustomerDetails = () => {
                   <tbody>
                     {customer?.movements.map((mov) => (
                       <tr key={mov.id}>
+                        <td>{mov.id}</td>
                         <td>{convertDate(mov?.createdAt)}</td>
 
                         <td>{convertToRealBR(mov?.previous)}</td>

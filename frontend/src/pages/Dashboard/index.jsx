@@ -45,10 +45,8 @@ export const Dashboard = () => {
     0
   );
 
-  const toReceive = clients
-    .filter((client, index) => client.movements[client.movements.length - 1])
-    // .reduce((acc, m) => acc + m.amount, 0);
-
+  // VAMOS CALCULAR ESSA BAGAÇA KKKKK
+  const toReceive = 0
 
   console.clear();
   console.log(borrowedTotal);
