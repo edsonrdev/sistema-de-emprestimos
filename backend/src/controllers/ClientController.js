@@ -10,7 +10,7 @@ class ClientController {
       include: Movement,
       order: [
         ["id", "DESC"],
-        [Movement, "id", "DESC"],
+        [Movement, "id", "ASC"],
       ],
     });
     return res.json(clients);
