@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import {ModalContext} from "../../providers/Modal"
 
 import { Link } from "react-router-dom";
 import { api } from "../../services";
@@ -13,16 +14,17 @@ import { ClientModal } from "../../components/ClientModal";
 import { Button } from "../../components/Button";
 
 export const Customers = () => {
-  const [modalType, setModalType] = useState("");
-  const [openModal, setOpenModal] = useState(false);
+  // modal context
+  const { visibility, showModal } = useContext(ModalContext);
+
+  // const [modalType, setModalType] = useState("");
+  // const [openModal, setOpenModal] = useState(false);
 
   const [customers, setCustomers] = useState([]);
   const [currentCustomer, setCurrentCustomer] = useState({});
 
   const [disabled, setDisabled] = useState(true);
   const [search, setSearch] = useState("");
-
-  // const disabledCustomers = customers.filter(customer => customer.isDisabled === true);
 
   const getCustomers = async () => {
     const res = disabled
@@ -43,17 +45,29 @@ export const Customers = () => {
     getCustomers();
   }, [currentCustomer, disabled, search]);
 
-  const handleOpenModal = (modalType, customer) => {
-    setCurrentCustomer(customer);
-    setModalType(modalType);
-    setOpenModal(true);
-  };
+  // const handleOpenModal = (modalType, customer) => {
+  //   setCurrentCustomer(customer);
+  //   setModalType(modalType);
+  //   setOpenModal(true);
+  // };
+  // const handleCloseModal = () => {
+  //   setCurrentCustomer({});
+  //   setModalType("");
+  //   setOpenModal(false);
+  // };
 
-  const handleCloseModal = () => {
-    setCurrentCustomer({});
-    setModalType("");
-    setOpenModal(false);
-  };
+  // const handleShowModal = (customer = "") => {
+  //   setClient(customer)
+  //   setTheme("default");
+  //   setVisibility(true);
+  // }
+  // const handleHiddeModal = () => {
+  //   setClient({});
+  //   setTheme("default");
+  //   setVisibility(false);
+  // }
+
+
 
   useEffect(() => {
     setSearch("");
@@ -96,11 +110,18 @@ export const Customers = () => {
               />
             </div>
 
-            <Button
+            {/* <Button
               text="Novo cliente"
               type="button"
               typeUIButton="default"
               onClick={() => handleOpenModal("default")}
+            /> */}
+
+            <Button
+              text="Modal Context"
+              type="button"
+              typeUIButton="default"
+              onClick={showModal}
             />
           </div>
 
@@ -135,7 +156,7 @@ export const Customers = () => {
                       <img
                         src={EditIcon}
                         alt="Editar cliente"
-                        onClick={() => handleOpenModal("edit", customer)}
+                        // onClick={() => handleOpenModal("edit", customer)}
                       />
                     ) : (
                       ""
@@ -144,7 +165,7 @@ export const Customers = () => {
                     <img
                       src={InactivateIcon}
                       alt="Desativar cliente"
-                      onClick={() => handleOpenModal("disable", customer)}
+                      // onClick={() => handleOpenModal("disable", customer)}
                     />
                   </td>
                 </tr>
@@ -154,13 +175,15 @@ export const Customers = () => {
         </div>
       </main>
 
-      {openModal && (
+      {/* {openModal && (
         <ClientModal
           modalType={modalType}
           handleCloseModal={handleCloseModal}
           currentCustomer={currentCustomer}
         />
-      )}
+      )} */}
+
+      {visibility && <ClientModal />}
     </Container>
   );
 };

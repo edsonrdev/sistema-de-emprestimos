@@ -6,6 +6,9 @@ import { Background, Container } from "./styles";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+
+import { useContext } from "react";
+import { ModalContext } from "../../providers/Modal";
 // import { useState } from "react";
 
 /**
@@ -18,13 +21,22 @@ import { yupResolver } from "@hookform/resolvers/yup";
  * handleCloseModal - handle para fechar o modal e resetar seus valores internos
  * currentCustomer - contém o objeto cliente atual, escolhido para edição/desativação, na listagem
  */
-export const ClientModal = ({
-  modalType,
-  handleCloseModal,
-  currentCustomer = {},
-}) => {
+
+// {
+//   modalType,
+//   handleCloseModal,
+//   currentCustomer = {},
+// }
+export const ClientModal = () => {
+  // modal context
+  const {theme, setVisibility, visibility, client, setClient, setTheme,hiddeModal} = useContext(ModalContext);
+
+  // console.log(client);
+  console.log(theme);
+  // console.log(typeof visibility);
+
   const schema = yup.object().shape({
-    ...((modalType === "default" || modalType === "edit") && {
+    ...((theme === "default" || theme === "edit") && {
       name: yup
         .string()
         .required("NOME é obrigatório!")
@@ -32,15 +44,6 @@ export const ClientModal = ({
       phone: yup.string().max(11, "É necessário 11 caracteres!"),
       address: yup.string().required("ENDEREÇO é obrigatório!"),
     }),
-
-    // ...(entity === "loans" && {
-    //   total: yup.string().required("O valor TOTAL é obrigatório!"),
-    //   portion: yup.string().required("O valor da PARCELA é obrigatório!"),
-
-    //   ...(isAlreadyLoan === true && {
-    //     paid: yup.string().required("O total JÁ PAGO é obrigatório!"),
-    //   }),
-    // }),
   });
 
   const {
@@ -50,20 +53,21 @@ export const ClientModal = ({
   } = useForm({ resolver: yupResolver(schema) });
 
   const submitCallback = async (data) => {
-    if (modalType === "default") {
+    if (theme === "default") {
       try {
         await api.post("/clients", data);
-        handleCloseModal();
+        // handleCloseModal();
+        hiddeModal();
         toast.success("Cliente salvo com sucesso!");
       } catch (err) {
         toast.error(err.response.data.message);
       }
     }
 
-    if (modalType === "edit") {
+    if (theme === "edit") {
       try {
-        await api.put(`/clients/${currentCustomer.id}`, data);
-        handleCloseModal();
+        await api.put(`/clients/${client.id}`, data);
+        hiddeModal()
         toast.success("Cliente editado com sucesso!");
       } catch (err) {
         toast.error(err.response.data.message);
@@ -74,7 +78,7 @@ export const ClientModal = ({
   const handleDisableCustomer = async (currentCustomer) => {
     try {
       await api.patch(`/clients/inactivate/${currentCustomer.id}`);
-      handleCloseModal();
+      hiddeModal();
       toast.success(
         `${
           currentCustomer.active
@@ -88,14 +92,15 @@ export const ClientModal = ({
   };
 
   return (
-    <Background modalType={modalType}>
-      <Container modalType={modalType} onSubmit={handleSubmit(submitCallback)}>
+    <Background>
+      <Container theme={theme} onSubmit={handleSubmit(submitCallback)}>
         {/* CREATE NEW CLIENT */}
-        {modalType === "default" && (
+        {theme === "default" && (
           <>
             <div className="form-header">
               <h2>Novo cliente</h2>
-              <IoMdClose onClick={handleCloseModal} />
+              {/* <IoMdClose onClick={handleCloseModal} /> */}
+              <IoMdClose onClick={setVisibility(false)} />
             </div>
 
             <div className="form-body">
@@ -138,7 +143,8 @@ export const ClientModal = ({
               <button
                 className="cancel"
                 type="button"
-                onClick={handleCloseModal}
+                // onClick={handleCloseModal}
+                onClick={setVisibility(false)}
               >
                 Cancelar
               </button>
@@ -150,11 +156,12 @@ export const ClientModal = ({
         )}
 
         {/* EDIT CLIENT */}
-        {modalType === "edit" && (
+        {theme === "edit" && (
           <>
             <div className="form-header">
               <h2>Editar cliente</h2>
-              <IoMdClose onClick={handleCloseModal} />
+              {/* <IoMdClose onClick={handleCloseModal} /> */}
+              <IoMdClose onClick={setVisibility(false)} />
             </div>
 
             <div className="form-body">
@@ -164,7 +171,7 @@ export const ClientModal = ({
                   type="text"
                   id="name"
                   placeholder="Francisco Gomes (Seu Chico)"
-                  defaultValue={currentCustomer ? currentCustomer.name : ""}
+                  defaultValue={client ? client.name : ""}
                   {...register("name")}
                 />
                 <span className="error">{errors.name?.message}</span>
@@ -177,7 +184,7 @@ export const ClientModal = ({
                   min="1"
                   id="phone"
                   placeholder="87999999999"
-                  defaultValue={currentCustomer ? currentCustomer.phone : ""}
+                  defaultValue={client ? client.phone : ""}
                   {...register("phone")}
                 />
                 <span className="error">{errors.phone?.message}</span>
@@ -189,7 +196,7 @@ export const ClientModal = ({
                   type="text"
                   id="address"
                   placeholder="Fazenda Aticum"
-                  defaultValue={currentCustomer ? currentCustomer.address : ""}
+                  defaultValue={client ? client.address : ""}
                   {...register("address")}
                 />
                 <span className="error">{errors.address?.message}</span>
@@ -200,7 +207,8 @@ export const ClientModal = ({
               <button
                 className="cancel"
                 type="button"
-                onClick={handleCloseModal}
+                // onClick={handleCloseModal}
+                onClick={setVisibility(false)}
               >
                 Cancelar
               </button>
@@ -212,29 +220,30 @@ export const ClientModal = ({
         )}
 
         {/* ATIVAR & DESATIVAR CLIENTE */}
-        {modalType === "disable" && (
+        {theme === "disable" && (
           <>
             <div className="form-header">
-              <h2>{currentCustomer.active ? "Desativar" : "Ativar"} cliente</h2>
-              <IoMdClose onClick={handleCloseModal} />
+              <h2>{client.active ? "Desativar" : "Ativar"} cliente</h2>
+              {/* <IoMdClose onClick={handleCloseModal} /> */}
+              <IoMdClose onClick={setVisibility(false)} />
             </div>
 
             <div className="form-body">
               <div className="form-group form-group-inline">
                 <div>
                   <strong>Cliente:</strong>
-                  <span>{currentCustomer.name}</span>
+                  <span>{client.name}</span>
                 </div>
 
                 <div>
                   <strong>Telefone:</strong>
                   <span>
-                    {currentCustomer.phone ? currentCustomer.phone : "..."}
+                    {client.phone ? client.phone : "..."}
                   </span>
                 </div>
                 <div>
                   <strong>Endereço:</strong>
-                  <span>{currentCustomer.address}</span>
+                  <span>{client.address}</span>
                 </div>
               </div>
             </div>
@@ -243,16 +252,17 @@ export const ClientModal = ({
               <button
                 className="cancel"
                 type="button"
-                onClick={handleCloseModal}
+                // onClick={handleCloseModal}
+                onClick={setVisibility(false)}
               >
                 Cancelar
               </button>
               <button
                 className="confirm"
                 type="button"
-                onClick={() => handleDisableCustomer(currentCustomer)}
+                onClick={() => handleDisableCustomer(client)}
               >
-                {currentCustomer.active ? "Desativar" : "Ativar"}
+                {client.active ? "Desativar" : "Ativar"}
               </button>
             </div>
           </>

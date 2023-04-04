@@ -11,6 +11,7 @@ import { Container } from "./styles";
 import { Header } from "../../components/Header";
 import { Button } from "../../components/Button";
 import { LoanModal } from "../../components/LoanModal";
+import { NewLoanModal } from "../../components/NewLoanModal";
 
 export const CustomerDetails = () => {
   const [customer, setCustomer] = useState({});
@@ -28,6 +29,7 @@ export const CustomerDetails = () => {
   // console.log(totalAdditional);
 
   const [openModal, setOpenModal] = useState(false);
+  const [openNewLoanModal, setOpenNewLoanModal] = useState(false);
   const [currentCustomer, setCurrentCustomer] = useState({});
   const [modalType, setModalType] = useState("");
 
@@ -52,16 +54,26 @@ export const CustomerDetails = () => {
     getCustomer();
   }, [customer]);
 
-  const handleCloseModal = () => {
+  const handleCloseModal = (modalFeature = "") => {
     setCurrentCustomer({});
     setModalType("");
-    setOpenModal(false);
+    
+    if (modalFeature === "newLoan") {
+      setOpenNewLoanModal(false);
+    } else if (modalFeature === "oldLoan") {
+      setOpenModal(false);
+    }
   };
 
-  const handleOpenModal = (modalType, customer) => {
+  const handleOpenModal = (modalType, customer, modalFeature = "") => {
     setCurrentCustomer(customer);
     setModalType(modalType);
-    setOpenModal(true);
+
+    if (modalFeature === "newLoan") {
+      setOpenNewLoanModal(true);
+    } else if (modalFeature === "oldLoan") {
+      setOpenModal(true);
+    }
   };
 
   const handleInputAmount = async () => {
@@ -149,13 +161,24 @@ export const CustomerDetails = () => {
 
           {customer.totalInitial === 0 && customer?.movements?.length === 0 ? (
             <div className="hire-loan">
-              <p>O cliente ainda não tem empréstimos contratados.</p>
-              <Button
-                text="Contratar empréstimo"
-                type="button"
-                typeUIButton="default"
-                onClick={() => handleOpenModal("default", customer)}
-              />
+              <p>Cliente não possui empréstimos no momento.</p>
+              <div className="loan-buttons">
+                <Button
+                  text="Simular empréstimo"
+                  type="button"
+                  typeUIButton="default"
+                  onClick={() => handleOpenModal("default", customer, "newLoan")}
+                />
+
+                <span className="or">OU</span>
+
+                <Button
+                  text="Empréstimo antigo"
+                  type="button"
+                  typeUIButton="default"
+                  onClick={() => handleOpenModal("default", customer, "oldLoan")}
+                />
+              </div>
             </div>
           ) : (
             <div className="data-loan">
@@ -308,6 +331,18 @@ export const CustomerDetails = () => {
       {openModal && (
         <LoanModal
           modalType="default"
+          openModal={openModal}
+          setOpenModal={setOpenModal}
+          handleCloseModal={handleCloseModal}
+          currentCustomer={currentCustomer}
+        />
+      )}
+
+      {openNewLoanModal && (
+        <NewLoanModal
+          modalType="default"
+          openNewLoanModal={openNewLoanModal}
+          setOpenNewLoanModal={setOpenNewLoanModal}
           handleCloseModal={handleCloseModal}
           currentCustomer={currentCustomer}
         />

@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const Container = styled.div`
   min-height: 100vh;
-  background: var(--secondary-dark) 50%;
+  background: var(--secondary-dark);
   color: var(--white);
 
   header {
@@ -93,6 +93,12 @@ export const Container = styled.div`
       flex-direction: column;
       align-items: flex-start;
       gap: 24px;
+
+      .loan-buttons {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
     }
 
     .loan-input-values {

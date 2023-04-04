@@ -4,6 +4,7 @@ import ReactDOM from "react-dom/client";
 import "react-toastify/dist/ReactToastify.css";
 import { App } from "./App";
 import { ToastContainer } from "react-toastify";
+import Providers from "./providers";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -21,6 +22,8 @@ root.render(
       pauseOnHover
       theme="colored"
     />
-    <App />
+    <Providers>
+      <App />
+    </Providers>
   </React.StrictMode>
 );
