@@ -8,6 +8,9 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
 
+import { useContext } from "react";
+import { ModalContext } from "../../providers/Modal";
+
 /**
  *
  * @param {*}
@@ -19,12 +22,12 @@ import { useState } from "react";
  * currentCustomer - contém o objeto cliente atual, escolhido para edição/desativação, na listagem
  */
 export const NewLoanModal = ({
-  modalType,
   openNewLoanModal,
   setOpenNewLoanModal,
   handleCloseModal,
   currentCustomer = {},
 }) => {
+  const {theme} = useContext(ModalContext);
   const [isOldLoan, setIsOldLoan] = useState(false);
 
   const schema = yup.object().shape({
@@ -49,10 +52,10 @@ export const NewLoanModal = ({
   };
 
   return (
-    <Background modalType={modalType}>
-      <Container modalType={modalType} onSubmit={handleSubmit(submitCallback)}>
+    <Background>
+      <Container theme={theme} onSubmit={handleSubmit(submitCallback)}>
         {/* CREATE NEW LOAN */}
-        {modalType === "default" && (
+        {theme === "default" && (
           <>
             <div className="form-header">
               <h2>Simular empréstimo</h2>

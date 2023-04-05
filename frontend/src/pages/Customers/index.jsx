@@ -1,28 +1,21 @@
 import { useState, useEffect, useContext } from "react";
-import {ModalContext} from "../../providers/Modal"
-
 import { Link } from "react-router-dom";
-import { api } from "../../services";
 
 import { Container } from "./styles";
-
 import EditIcon from "../../assets/EditIcon.svg";
 import InactivateIcon from "../../assets/InactivateIcon.svg";
+
+import { api } from "../../services";
+import {ModalContext} from "../../providers/Modal"
 
 import { Header } from "../../components/Header";
 import { ClientModal } from "../../components/ClientModal";
 import { Button } from "../../components/Button";
 
 export const Customers = () => {
-  // modal context
   const { visibility, showModal } = useContext(ModalContext);
-
-  // const [modalType, setModalType] = useState("");
-  // const [openModal, setOpenModal] = useState(false);
-
+  
   const [customers, setCustomers] = useState([]);
-  const [currentCustomer, setCurrentCustomer] = useState({});
-
   const [disabled, setDisabled] = useState(true);
   const [search, setSearch] = useState("");
 
@@ -38,36 +31,19 @@ export const Customers = () => {
         customer.name.toLowerCase().includes(search.toLowerCase())
       );
     }
+
     setCustomers(customers);
   };
 
   useEffect(() => {
     getCustomers();
-  }, [currentCustomer, disabled, search]);
+  }, [disabled, search]);
 
-  // const handleOpenModal = (modalType, customer) => {
-  //   setCurrentCustomer(customer);
-  //   setModalType(modalType);
-  //   setOpenModal(true);
-  // };
-  // const handleCloseModal = () => {
-  //   setCurrentCustomer({});
-  //   setModalType("");
-  //   setOpenModal(false);
-  // };
+  useEffect(() => {
+    getCustomers();
+  }, []);
 
-  // const handleShowModal = (customer = "") => {
-  //   setClient(customer)
-  //   setTheme("default");
-  //   setVisibility(true);
-  // }
-  // const handleHiddeModal = () => {
-  //   setClient({});
-  //   setTheme("default");
-  //   setVisibility(false);
-  // }
-
-
+  // console.log(customers);
 
   useEffect(() => {
     setSearch("");
@@ -110,15 +86,8 @@ export const Customers = () => {
               />
             </div>
 
-            {/* <Button
-              text="Novo cliente"
-              type="button"
-              typeUIButton="default"
-              onClick={() => handleOpenModal("default")}
-            /> */}
-
             <Button
-              text="Modal Context"
+              text="Novo cliente"
               type="button"
               typeUIButton="default"
               onClick={showModal}
@@ -156,7 +125,7 @@ export const Customers = () => {
                       <img
                         src={EditIcon}
                         alt="Editar cliente"
-                        // onClick={() => handleOpenModal("edit", customer)}
+                        onClick={() => showModal(customer, "edit")}
                       />
                     ) : (
                       ""
@@ -165,7 +134,7 @@ export const Customers = () => {
                     <img
                       src={InactivateIcon}
                       alt="Desativar cliente"
-                      // onClick={() => handleOpenModal("disable", customer)}
+                      onClick={() => showModal(customer, "disable")}
                     />
                   </td>
                 </tr>
@@ -174,14 +143,6 @@ export const Customers = () => {
           </table>
         </div>
       </main>
-
-      {/* {openModal && (
-        <ClientModal
-          modalType={modalType}
-          handleCloseModal={handleCloseModal}
-          currentCustomer={currentCustomer}
-        />
-      )} */}
 
       {visibility && <ClientModal />}
     </Container>

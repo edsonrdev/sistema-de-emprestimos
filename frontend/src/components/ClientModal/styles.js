@@ -24,10 +24,10 @@ export const Container = styled.form`
   flex-direction: column;
 
   border: 2px solid;
-  border-color: ${({ modalType }) =>
-    modalType === "default"
+  border-color: ${({ theme }) =>
+    theme === "default"
       ? css`var(--primary)`
-      : modalType === "edit"
+      : theme === "edit"
       ? css`var(--green-dark)`
       : css`var(--warning-dark)`};
 
@@ -43,10 +43,10 @@ export const Container = styled.form`
     display: flex;
     align-items: center;
 
-    background: ${({ modalType }) =>
-      modalType === "default"
+    background: ${({ theme }) =>
+      theme === "default"
         ? css`var(--primary)`
-        : modalType === "edit"
+        : theme === "edit"
         ? css`var(--green)`
         : css`var(--warning)`};
 
@@ -107,10 +107,10 @@ export const Container = styled.form`
     }
 
     label {
-      color: ${({ modalType }) =>
-        modalType === "default"
+      color: ${({ theme }) =>
+        theme === "default"
           ? css`var(--primary)`
-          : modalType === "edit"
+          : theme === "edit"
           ? css`var(--green)`
           : css`var(--warning-dark)`};
 
@@ -138,10 +138,10 @@ export const Container = styled.form`
 
       background: var(--white);
       border: 2px solid;
-      border-color: ${({ modalType }) =>
-        modalType === "default"
+      border-color: ${({ theme }) =>
+        theme === "default"
           ? css`var(--primary)`
-          : modalType === "edit"
+          : theme === "edit"
           ? css`var(--green)`
           : css`var(--warning-dark)`};
       border-radius: 5px;
@@ -199,26 +199,26 @@ export const Container = styled.form`
       &.confirm {
         color: var(--white);
 
-        background: ${({ modalType }) =>
-          modalType === "default"
+        background: ${({ theme }) =>
+          theme === "default"
             ? css`var(--primary)`
-            : modalType === "edit"
+            : theme === "edit"
             ? css`var(--green)`
             : css`var(--warning)`};
 
         border: 1px solid;
-        border-color: ${({ modalType }) =>
-          modalType === "default"
+        border-color: ${({ theme }) =>
+          theme === "default"
             ? css`var(--primary)`
-            : modalType === "edit"
+            : theme === "edit"
             ? css`var(--green-dark)`
             : css`var(--warning-dark)`};
 
         &:hover {
-          background: ${({ modalType }) =>
-            modalType === "default"
+          background: ${({ theme }) =>
+            theme === "default"
               ? css`var(--primary-dark)`
-              : modalType === "edit"
+              : theme === "edit"
               ? css`var(--green-dark)`
               : css`var(--warning-dark)`};
         }

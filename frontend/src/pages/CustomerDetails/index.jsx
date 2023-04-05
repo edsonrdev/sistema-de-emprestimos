@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -10,10 +10,12 @@ import { Container } from "./styles";
 
 import { Header } from "../../components/Header";
 import { Button } from "../../components/Button";
-import { LoanModal } from "../../components/LoanModal";
 import { NewLoanModal } from "../../components/NewLoanModal";
+import { LoanModal } from "../../components/LoanModal";
+import { ModalContext } from "../../providers/Modal";
 
 export const CustomerDetails = () => {
+  const { client, theme, visibility, modalType, showModal } = useContext(ModalContext);
   const [customer, setCustomer] = useState({});
 
   const totalPaid =
@@ -26,12 +28,15 @@ export const CustomerDetails = () => {
     ?.filter((mov) => mov?.type === "output")
     ?.reduce((acc, item) => acc + item?.amount, 0);
 
-  // console.log(totalAdditional);
+  console.log(client);
+  console.log(theme);
+  console.log(modalType);
+  console.log(visibility);
 
-  const [openModal, setOpenModal] = useState(false);
-  const [openNewLoanModal, setOpenNewLoanModal] = useState(false);
-  const [currentCustomer, setCurrentCustomer] = useState({});
-  const [modalType, setModalType] = useState("");
+  // const [openModal, setOpenModal] = useState(false);
+  // const [openNewLoanModal, setOpenNewLoanModal] = useState(false);
+  // const [currentCustomer, setCurrentCustomer] = useState({});
+  // const [modalType, setModalType] = useState("");
 
   const desiredAmountRef = useRef(null);
   const interestRateRef = useRef(null);
@@ -49,32 +54,12 @@ export const CustomerDetails = () => {
     getCustomer();
   }, []);
 
-  useEffect(() => {
-    // console.log(customer);
-    getCustomer();
-  }, [customer]);
+  // useEffect(() => {
+  //   // console.log(customer);
+  //   getCustomer();
+  // }, [customer]);
 
-  const handleCloseModal = (modalFeature = "") => {
-    setCurrentCustomer({});
-    setModalType("");
-    
-    if (modalFeature === "newLoan") {
-      setOpenNewLoanModal(false);
-    } else if (modalFeature === "oldLoan") {
-      setOpenModal(false);
-    }
-  };
-
-  const handleOpenModal = (modalType, customer, modalFeature = "") => {
-    setCurrentCustomer(customer);
-    setModalType(modalType);
-
-    if (modalFeature === "newLoan") {
-      setOpenNewLoanModal(true);
-    } else if (modalFeature === "oldLoan") {
-      setOpenModal(true);
-    }
-  };
+  
 
   const handleInputAmount = async () => {
     const data = {
@@ -162,12 +147,13 @@ export const CustomerDetails = () => {
           {customer.totalInitial === 0 && customer?.movements?.length === 0 ? (
             <div className="hire-loan">
               <p>Cliente não possui empréstimos no momento.</p>
+
               <div className="loan-buttons">
                 <Button
                   text="Simular empréstimo"
                   type="button"
                   typeUIButton="default"
-                  onClick={() => handleOpenModal("default", customer, "newLoan")}
+                  onClick={() => showModal(customer, "default", "newLoan")}
                 />
 
                 <span className="or">OU</span>
@@ -176,7 +162,7 @@ export const CustomerDetails = () => {
                   text="Empréstimo antigo"
                   type="button"
                   typeUIButton="default"
-                  onClick={() => handleOpenModal("default", customer, "oldLoan")}
+                  onClick={() => showModal(customer, "default", "oldLoan")}
                 />
               </div>
             </div>
@@ -328,24 +314,12 @@ export const CustomerDetails = () => {
         </div>
       </main>
 
-      {openModal && (
-        <LoanModal
-          modalType="default"
-          openModal={openModal}
-          setOpenModal={setOpenModal}
-          handleCloseModal={handleCloseModal}
-          currentCustomer={currentCustomer}
-        />
+      {(visibility && modalType === "newLoan") && (
+        <NewLoanModal />
       )}
 
-      {openNewLoanModal && (
-        <NewLoanModal
-          modalType="default"
-          openNewLoanModal={openNewLoanModal}
-          setOpenNewLoanModal={setOpenNewLoanModal}
-          handleCloseModal={handleCloseModal}
-          currentCustomer={currentCustomer}
-        />
+      {(visibility && modalType === "oldLoan") && (
+        <LoanModal />
       )}
     </Container>
   );
