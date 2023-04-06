@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { Link } from "react-router-dom";
 
 import { Container } from "./styles";
@@ -7,47 +7,37 @@ import InactivateIcon from "../../assets/InactivateIcon.svg";
 
 import { api } from "../../services";
 import {ModalContext} from "../../providers/Modal"
-
 import { Header } from "../../components/Header";
 import { ClientModal } from "../../components/ClientModal";
 import { Button } from "../../components/Button";
 
 export const Customers = () => {
+  // application contexts
   const { visibility, showModal } = useContext(ModalContext);
-  
-  const [customers, setCustomers] = useState([]);
-  const [disabled, setDisabled] = useState(true);
-  const [search, setSearch] = useState("");
 
-  const getCustomers = async () => {
-    const res = disabled
-      ? await api.get("/clients/actives")
-      : await api.get("/clients/inactives");
+  // local states
+  const [clients, setClients] = useState([]);
+  const [searchClient, setSearchClient] = useState("");
 
-    let customers = res.data;
+  // derived states
+  const disabledClients = clients.filter(client => !client.active);
+  const researchedClients = searchClient ? clients.filter(client => client.name.toLowerCase().includes(searchClient.toLowerCase())) : [];
 
-    if (search) {
-      customers = customers.filter((customer) =>
-        customer.name.toLowerCase().includes(search.toLowerCase())
-      );
-    }
+  console.log(clients);
+  console.log(researchedClients);
 
-    setCustomers(customers);
-  };
+  const getClients = async () => {
+    const {data} = await api.get("/clients");
+    setClients(data);
+  }
 
   useEffect(() => {
-    getCustomers();
-  }, [disabled, search]);
-
-  useEffect(() => {
-    getCustomers();
+    getClients();
   }, []);
 
-  // console.log(customers);
-
   useEffect(() => {
-    setSearch("");
-  }, [disabled]);
+    getClients();
+  }, [searchClient]);
 
   return (
     <Container>
@@ -62,8 +52,6 @@ export const Customers = () => {
               <input
                 type="checkbox"
                 id="show-disabled"
-                value={disabled}
-                onChange={() => setDisabled(!disabled)}
               />
               Mostrar clientes desativados
             </label>
@@ -74,15 +62,8 @@ export const Customers = () => {
               <input
                 type="search"
                 placeholder="Pesquisar cliente..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-
-              <Button
-                text="Limpar"
-                type="button"
-                typeUIButton="default"
-                onClick={() => setSearch("")}
+                value={searchClient}
+                onChange={(e) => setSearchClient(e)}
               />
             </div>
 
@@ -105,27 +86,27 @@ export const Customers = () => {
             </thead>
 
             <tbody>
-              {[...customers].reverse().map((customer) => (
-                <tr key={customer.id}>
+              {clients.reverse().map((client) => (
+                <tr key={client.id}>
                   <td>
-                    {customer.active ? (
+                    {client.active ? (
                       <Link
-                        to={customer.active ? `/clients/${customer.id}` : ""}
+                        to={client.active ? `/clients/${client.id}` : ""}
                       >
-                        {customer.name}
+                        {client.name}
                       </Link>
                     ) : (
-                      <>{customer.name}</>
+                      <>{client.name}</>
                     )}
                   </td>
-                  <td>{customer.phone ? customer.phone : "..."}</td>
-                  <td>{customer.address}</td>
+                  <td>{client.phone ? client.phone : "..."}</td>
+                  <td>{client.address}</td>
                   <td className="options">
-                    {customer.active ? (
+                    {client.active ? (
                       <img
                         src={EditIcon}
                         alt="Editar cliente"
-                        onClick={() => showModal(customer, "edit")}
+                        onClick={() => showModal(client, "edit")}
                       />
                     ) : (
                       ""
@@ -134,7 +115,7 @@ export const Customers = () => {
                     <img
                       src={InactivateIcon}
                       alt="Desativar cliente"
-                      onClick={() => showModal(customer, "disable")}
+                      onClick={() => showModal(client, "disable")}
                     />
                   </td>
                 </tr>

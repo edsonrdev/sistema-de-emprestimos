@@ -118,7 +118,7 @@ export const Container = styled.div`
 
       input {
         height: 44px;
-        width: 250px;
+        width: 300px;
         padding: 16px;
 
         border: 2px solid var(--primary-light);
@@ -135,8 +135,8 @@ export const Container = styled.div`
         display: flex;
 
         input {
-          border-radius: 5px 0 0 5px;
-          border-right: none;
+          /* border-radius: 5px 0 0 5px; */
+          /* border-right: none; */
           outline: none;
         }
 

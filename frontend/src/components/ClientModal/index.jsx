@@ -13,7 +13,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { ModalContext } from "../../providers/Modal";
 
 export const ClientModal = () => {
-  // modal context
   const {theme, client, hiddeModal} = useContext(ModalContext);
 
   const schema = yup.object().shape({

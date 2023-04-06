@@ -10,10 +10,8 @@ export const ModalProvider = ({children}) => {
 
     const showModal = (client = {}, theme = "default", modalType = "client") => {
         if (modalType === "newLoan") {
-            console.log("new loan modal");
-            // setModalType("newLoan");
+            setModalType("newLoan");
         } else if (modalType === "oldLoan") {
-            // console.log("old loan modal");
             setModalType("oldLoan");
         }
 
@@ -30,7 +28,7 @@ export const ModalProvider = ({children}) => {
     }
 
     return (
-        <ModalContext.Provider value={{client, theme, visibility, modalType, showModal, hiddeModal}}>
+        <ModalContext.Provider value={{modalType, client, theme, visibility, showModal, hiddeModal}}>
             {children}
         </ModalContext.Provider>
     );
