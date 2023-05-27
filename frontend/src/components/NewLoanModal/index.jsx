@@ -11,23 +11,15 @@ import { useState } from "react";
 import { useContext } from "react";
 import { ModalContext } from "../../providers/Modal";
 
-/**
- *
- * @param {*}
- * @returns
- *
- * modaType - representa o tipo de UI Modal: default, edit, disable
- * entity - model/tabela no banco de dados ao qual o modal está relacionado: customers, loans, etc.
- * handleCloseModal - handle para fechar o modal e resetar seus valores internos
- * currentCustomer - contém o objeto cliente atual, escolhido para edição/desativação, na listagem
- */
-export const NewLoanModal = ({
-  openNewLoanModal,
-  setOpenNewLoanModal,
-  handleCloseModal,
-  currentCustomer = {},
-}) => {
-  const {theme} = useContext(ModalContext);
+export const NewLoanModal = (
+  {
+    // openNewLoanModal,
+    // setOpenNewLoanModal,
+    // handleCloseModal,
+    // currentCustomer = {},
+  }
+) => {
+  const { theme, client, hiddeModal } = useContext(ModalContext);
   const [isOldLoan, setIsOldLoan] = useState(false);
 
   const schema = yup.object().shape({
@@ -45,8 +37,6 @@ export const NewLoanModal = ({
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) });
 
-
-
   const submitCallback = async (data) => {
     console.log(data);
   };
@@ -59,13 +49,15 @@ export const NewLoanModal = ({
           <>
             <div className="form-header">
               <h2>Simular empréstimo</h2>
-              <IoMdClose onClick={handleCloseModal("newLoan")} />
+              <IoMdClose
+              // onClick={handleCloseModal("newLoan")}
+              />
             </div>
 
             <div className="form-body">
               <input
                 type="hidden"
-                value={currentCustomer.id}
+                // value={currentCustomer.id}
                 {...register("clientId")}
               />
               <div className="form-group">
@@ -129,7 +121,7 @@ export const NewLoanModal = ({
               <button
                 className="cancel"
                 type="button"
-                onClick={handleCloseModal}
+                // onClick={handleCloseModal}
               >
                 Cancelar
               </button>

@@ -1,32 +1,26 @@
 import { DataTypes } from "sequelize";
 import connection from "../database/connection.js";
+import Client from "./Client.js";
 
-const Client = connection.define("client", {
-  // client specific attributes
-  name: {
-    type: DataTypes.STRING,
+const Loan = connection.define("loan", {
+  value: {
+    type: DataTypes.FLOAT,
     allowNull: false,
     required: true,
   },
-  phone: {
-    type: DataTypes.STRING,
-    defaultValue: "",
-  },
-  address: {
-    type: DataTypes.STRING,
+  portion: {
+    type: DataTypes.FLOAT,
     allowNull: false,
     required: true,
   },
-  // active: {
-  //   type: DataTypes.BOOLEAN,
-  //   defaultValue: true,
-  // },
+  // movements: {
 
-  // client loan attributes
+  // }
   // totalInitial: {
   //   type: DataTypes.FLOAT,
   //   defaultValue: 0,
   // },
+  // //   totalNow: {
   // total: {
   //   type: DataTypes.FLOAT,
   //   defaultValue: 0,
@@ -35,6 +29,7 @@ const Client = connection.define("client", {
   //   type: DataTypes.FLOAT,
   //   defaultValue: 0,
   // },
+  // //   paidNow: {
   // paid: {
   //   type: DataTypes.FLOAT,
   //   defaultValue: 0,
@@ -49,4 +44,7 @@ const Client = connection.define("client", {
   // },
 });
 
-export default Client;
+Client.hasMany(Loan);
+Loan.belongsTo(Client);
+
+export default Loan;

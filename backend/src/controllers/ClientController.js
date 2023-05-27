@@ -1,37 +1,19 @@
 import { where } from "sequelize";
 import connection from "../database/connection.js";
 import Client from "../models/Client.js";
-import Movement from "../models/Movement.js";
+import Loan from "../models/Loan.js";
 
 class ClientController {
   // LIST ALL CLIENTS
   static async findAll(req, res) {
     const clients = await Client.findAll({
-      include: Movement,
+      include: Loan,
       order: [
         ["id", "DESC"],
-        [Movement, "id", "ASC"],
+        [Loan, "id", "ASC"],
       ],
     });
     return res.json(clients);
-  }
-
-  // LIST ALL ACTIVE CLIENTS
-  static async findActives(req, res) {
-    const clients = await Client.findAll({
-      where: { active: true },
-      include: Movement,
-    });
-    return res.json(clients);
-  }
-
-  // LIST ALL INACTIVE CLIENTS
-  static async findInactives(req, res) {
-    const inactiveClients = await Client.findAll({
-      where: { active: false },
-      include: Movement,
-    });
-    return res.json(inactiveClients);
   }
 
   // LIST AN SPECIFIC CLIENT
@@ -39,7 +21,7 @@ class ClientController {
     const { id } = req.params;
 
     const client = await Client.findByPk(id, {
-      include: { model: Movement },
+      include: { all: true, nested: true },
     });
 
     if (!client) {
@@ -167,7 +149,7 @@ class ClientController {
       paidInitial: paid,
       paid: paid,
       portion: portion,
-      interestRate: 0.1
+      interestRate: 0.1,
     });
 
     if (!updatedClient) {

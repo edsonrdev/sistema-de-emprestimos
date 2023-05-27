@@ -1,6 +1,7 @@
 import express from "express";
 import UserController from "./controllers/UserController.js";
 import ClientController from "./controllers/ClientController.js";
+import LoanController from "./controllers/LoanController.js";
 import MovementController from "./controllers/MovementController.js";
 
 const routes = express.Router();
@@ -12,15 +13,17 @@ routes.post("/users/login", UserController.login);
 routes.put("/users", UserController.update);
 
 // client routes
-routes.get("/clients", ClientController.findAll);
-routes.get("/clients/actives", ClientController.findActives);
-routes.get("/clients/inactives", ClientController.findInactives);
-routes.get("/clients/:id", ClientController.findById);
-routes.post("/clients", ClientController.create);
-routes.put("/clients/:id", ClientController.update);
-routes.patch("/clients/inactivate/:id", ClientController.inactivate);
-routes.post("/clients/loan", ClientController.createLoan);
-routes.patch("/clients/rate", ClientController.updateInterestRate);
+routes.post("/clientes", ClientController.create);
+routes.get("/clientes", ClientController.findAll);
+routes.get("/clientes/:id", ClientController.findById);
+routes.put("/clientes/:id", ClientController.update);
+
+routes.post("/clientes/loan", ClientController.createLoan);
+routes.patch("/clientes/rate", ClientController.updateInterestRate);
+
+// loan routes
+routes.post("/emprestimos", LoanController.create);
+routes.get("/emprestimos", LoanController.findAll);
 
 // movement routes
 routes.get("/movements", MovementController.findAll);

@@ -28,10 +28,10 @@ export const CustomerDetails = () => {
     ?.filter((mov) => mov?.type === "output")
     ?.reduce((acc, item) => acc + item?.amount, 0);
 
-  console.log(client);
-  console.log(theme);
-  console.log(modalType);
-  console.log(visibility);
+  // console.log(client);
+  // console.log(theme);
+  // console.log(modalType);
+  // console.log(visibility);
 
   // const [openModal, setOpenModal] = useState(false);
   // const [openNewLoanModal, setOpenNewLoanModal] = useState(false);
@@ -46,20 +46,15 @@ export const CustomerDetails = () => {
   const history = useHistory();
 
   const getCustomer = async () => {
-    const res = await api.get(`/clients/${id}`);
-    setCustomer(res.data);
+    const { data } = await api.get(`/clients/${id}`);
+    setCustomer(data);
   };
 
   useEffect(() => {
     getCustomer();
   }, []);
 
-  // useEffect(() => {
-  //   // console.log(customer);
-  //   getCustomer();
-  // }, [customer]);
-
-  
+  console.log(customer);
 
   const handleInputAmount = async () => {
     const data = {
@@ -127,7 +122,7 @@ export const CustomerDetails = () => {
           <div className="page-title">
             <h2>Cliente: {customer.name}</h2>
 
-            {customer.totalInitial !== 0 && (
+            {customer.loans?.length !== 0 && (
               <h2>
                 Valor da parcela:{" "}
                 <span>{convertToRealBR(customer?.portion)}</span>
@@ -144,22 +139,22 @@ export const CustomerDetails = () => {
 
           <hr />
 
-          {customer.totalInitial === 0 && customer?.movements?.length === 0 ? (
+          {!customer.loans?.length ? (
             <div className="hire-loan">
-              <p>Cliente não possui empréstimos no momento.</p>
+              <p>Este cliente não possui empréstimos no momento.</p>
 
               <div className="loan-buttons">
                 <Button
-                  text="Simular empréstimo"
+                  text="Simular novo empréstimo"
                   type="button"
-                  typeUIButton="default"
+                  // typeUIButton="default"
                   onClick={() => showModal(customer, "default", "newLoan")}
                 />
 
                 <span className="or">OU</span>
 
                 <Button
-                  text="Empréstimo antigo"
+                  text="Cadastrar empréstimo antigo"
                   type="button"
                   typeUIButton="default"
                   onClick={() => showModal(customer, "default", "oldLoan")}

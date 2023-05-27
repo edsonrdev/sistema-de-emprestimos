@@ -20,24 +20,29 @@ export const Customers = () => {
   const [searchClient, setSearchClient] = useState("");
 
   // derived states
-  const disabledClients = clients.filter(client => !client.active);
-  const researchedClients = searchClient ? clients.filter(client => client.name.toLowerCase().includes(searchClient.toLowerCase())) : [];
+  // const disabledClients = clients.filter(client => !client.active);
+  // const researchedClients = searchClient ? clients.filter(client => client.name.toLowerCase().includes(searchClient.toLowerCase())) : [];
 
-  console.log(clients);
-  console.log(researchedClients);
-
-  const getClients = async () => {
-    const {data} = await api.get("/clients");
-    setClients(data);
+  const getClients = () => {
+    api.get("/clients")
+    .then(resp => {
+      const { data } = resp;
+      setClients(data);
+    })
+    .catch(error => {
+      console.log(error);
+    });
   }
+
+  useEffect(() => {
+    getClients();
+  });
+  console.log(clients);
 
   useEffect(() => {
     getClients();
   }, []);
 
-  useEffect(() => {
-    getClients();
-  }, [searchClient]);
 
   return (
     <Container>
@@ -86,7 +91,7 @@ export const Customers = () => {
             </thead>
 
             <tbody>
-              {clients.reverse().map((client) => (
+              {clients.map((client) => (
                 <tr key={client.id}>
                   <td>
                     {client.active ? (
