@@ -2,6 +2,7 @@ import { where } from "sequelize";
 import connection from "../database/connection.js";
 import Client from "../models/Client.js";
 import Loan from "../models/Loan.js";
+import Movement from "../models/Movement.js";
 
 class ClientController {
   // LIST ALL CLIENTS
@@ -22,6 +23,7 @@ class ClientController {
 
     const client = await Client.findByPk(id, {
       include: { all: true, nested: true },
+      order: [[Loan, Movement, "id", "ASC"]],
     });
 
     if (!client) {

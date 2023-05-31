@@ -20,6 +20,23 @@ const Movement = connection.define("movement", {
     allowNull: false,
     required: true,
   },
+  previousValue: {
+    type: DataTypes.FLOAT,
+    defaultValue: 0,
+  },
+  paidValue: {
+    type: DataTypes.FLOAT,
+    defaultValue: 0,
+  },
+  status: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  },
+  current: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    required: true,
+  },
 
   // specific data loan
   // previous: {

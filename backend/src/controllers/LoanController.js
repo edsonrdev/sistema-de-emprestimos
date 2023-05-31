@@ -3,15 +3,12 @@ import connection from "../database/connection.js";
 import Client from "../models/Client.js";
 import Loan from "../models/Loan.js";
 import Movement from "../models/Movement.js";
-import { addDays } from "date-fns";
-// import addDays from "date-fns/addDays";
+import { addMonths } from "date-fns";
 
 class LoanController {
   static async create(req, res) {
     const { clientId, portion } = req.body;
     let { value } = req.body;
-
-    let remainderValue = 0;
 
     if (!clientId || !value || !portion) {
       return res.status(422).json({
@@ -39,24 +36,34 @@ class LoanController {
 
     let count = 1;
     let today = new Date();
+    let initialValue = value;
+    let remainderValue = 0;
 
-    // // criar as movimentações
-    while (value >= portion) {
+    for (let count = 1; value >= portion; count++) {
       remainderValue = value + value * 0.1 - portion;
-
-      // ...
-      let movement = await Movement.create({
+      await Movement.create({
         loanId: createdLoan.id,
-        expireDate: addDays(today, count * 30),
+        expireDate: addMonths(today, count),
         expired: false,
         remainderValue,
+        current: count === 1 ? true : false,
       });
 
       value = remainderValue;
-      count++;
     }
 
-    // count = 0;
+    let movements = await Movement.findAll();
+
+    for (let i = 0; i < movements.length; i++) {
+      movements[i].previousValue =
+        i === 0
+          ? initialValue
+          : i === 1
+          ? movements[0].remainderValue
+          : movements[i - 1].remainderValue;
+
+      movements[i].save();
+    }
 
     return res.status(201).json(createdLoan);
   }
