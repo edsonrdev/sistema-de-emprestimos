@@ -2,7 +2,7 @@ import { where } from "sequelize";
 import connection from "../database/connection.js";
 import Client from "../models/Client.js";
 import Loan from "../models/Loan.js";
-import Movement from "../models/Movement.js";
+import Parcel from "../models/Parcel.js";
 
 class ClientController {
   // LIST ALL CLIENTS
@@ -14,6 +14,11 @@ class ClientController {
         [Loan, "id", "ASC"],
       ],
     });
+
+    if (!clients) {
+      return res.json({ message: "Erro ao buscar clientes!" });
+    }
+
     return res.json(clients);
   }
 
@@ -23,7 +28,7 @@ class ClientController {
 
     const client = await Client.findByPk(id, {
       include: { all: true, nested: true },
-      order: [[Loan, Movement, "id", "ASC"]],
+      order: [[Loan, Parcel, "id", "ASC"]],
     });
 
     if (!client) {
@@ -84,79 +89,6 @@ class ClientController {
     if (!updatedClient) {
       return res.status(500).json({
         message: "Erro ao atualizar cliente!",
-      });
-    }
-
-    return res.status(201).json(updatedClient);
-  }
-
-  // INACTIVATE CLIENT
-  static async inactivate(req, res) {
-    const { id } = req.params;
-
-    if (!id) {
-      return res.status(422).json({
-        message: "ID é obrigatório!",
-      });
-    }
-
-    const foundedClient = await Client.findByPk(id);
-
-    if (!foundedClient) {
-      return res.status(422).json({ message: "Cliente não encontrado!" });
-    }
-
-    const inactiveClient = await foundedClient.update({
-      active: !foundedClient.active,
-    });
-
-    if (!inactiveClient) {
-      return res.status(500).json({
-        message: "Erro ao desativar cliente!",
-      });
-    }
-
-    return res.status(201).json(inactiveClient);
-  }
-
-  // CREATE LOAN
-  static async createLoan(req, res) {
-    const { clientId, amount, portion, paid = 0 } = req.body;
-
-    if (!clientId || !amount || !portion) {
-      return res.status(422).json({
-        message: "Cliente, Empréstimo e Parcela são obrigatórios!",
-      });
-    }
-
-    const foundedClient = await Client.findByPk(clientId);
-
-    if (!foundedClient) {
-      return res.status(422).json({
-        message: "Cliente não encontrado!",
-      });
-    }
-
-    // SE O CLIENTE JÁ TEM EMPRÉSIMO, NÃO DEIXA CRIAR OUTRO!
-    if (foundedClient?.totalInitial || foundedClient?.movements?.[0]) {
-      return res
-        .status(422)
-        .json({ message: "Erro! Este cliente já contratou empréstimo!" });
-    }
-
-    // CRIA O EMPRÉSTIMO (SETA OS VALORES P/ CADA ATRIBUTO)
-    const updatedClient = await foundedClient.update({
-      totalInitial: amount,
-      total: amount * 1.1 - paid,
-      paidInitial: paid,
-      paid: paid,
-      portion: portion,
-      interestRate: 0.1,
-    });
-
-    if (!updatedClient) {
-      return res.status(500).json({
-        message: "Erro ao contratar empréstimo!",
       });
     }
 

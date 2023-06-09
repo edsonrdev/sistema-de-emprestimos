@@ -1,14 +1,14 @@
 import connection from "../database/connection.js";
 import Client from "../models/Client.js";
-import Movement from "../models/Movement.js";
+import Parcel from "../models/Parcel.js";
 
-class MovementController {
+class ParcelController {
   // LIST ALL MOVEMENTS
   static async findAll(req, res) {
-    const movements = await Movement.findAll({
-      order: [["id", "DESC"]],
+    const parcels = await Parcel.findAll({
+      order: [["id", "ASC"]],
     });
-    return res.json(movements);
+    return res.json(parcels);
   }
 
   // CREATE A NEW MOVEMENT
@@ -70,7 +70,7 @@ class MovementController {
     }
 
     // CRIA NOVA MOVIMENTAÇÃO
-    const createdMovement = await Movement.create({
+    const createdMovement = await Parcel.create({
       clientId,
       amount,
       type,
@@ -110,4 +110,4 @@ class MovementController {
   }
 }
 
-export default MovementController;
+export default ParcelController;

@@ -13,35 +13,14 @@ const Loan = connection.define("loan", {
     allowNull: false,
     required: true,
   },
-  // movements: {
-
-  // }
-  // totalInitial: {
-  //   type: DataTypes.FLOAT,
-  //   defaultValue: 0,
-  // },
-  // //   totalNow: {
-  // total: {
-  //   type: DataTypes.FLOAT,
-  //   defaultValue: 0,
-  // },
-  // paidInitial: {
-  //   type: DataTypes.FLOAT,
-  //   defaultValue: 0,
-  // },
-  // //   paidNow: {
-  // paid: {
-  //   type: DataTypes.FLOAT,
-  //   defaultValue: 0,
-  // },
-  // portion: {
-  //   type: DataTypes.FLOAT,
-  //   defaultValue: 0,
-  // },
-  // interestRate: {
-  //   type: DataTypes.FLOAT,
-  //   defaultValue: 0.1,
-  // },
+  finished: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+  current: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
+  },
 });
 
 Client.hasMany(Loan);

@@ -7,7 +7,7 @@ import connection from "./database/connection.js";
 // import the models
 import User from "./models/User.js";
 import Client from "./models/Client.js";
-import Movement from "./models/Movement.js";
+import Parcel from "./models/Parcel.js";
 
 // import routes
 import { routes } from "./routes.js";
