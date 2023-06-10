@@ -94,38 +94,39 @@ class LoanController {
       order: [[Parcel, "id", "ASC"]],
     });
 
+    // valida o empréstimo
     if (!loan) {
       return res.status(404).json({ message: "Empréstimo não encontrado!" });
     }
 
-    // console.log(loan); // emprestimos OK
-    const parcels = loan.parcels;
-
-    let currentParcel = loan?.parcels.find((parcel) => parcel.current);
-    // let nextParcel = loan?.parcels?.[currentParcel.id + 1];
-    // console.log(nextParcel);
-
-    currentParcel.paidValue = amount;
-
+    // não aceita o valor zero ou negativo como pagamento
     if (amount <= 0) {
       return res
         .status(422)
         .json({ message: "O valor pago não pode ser menor/igual que zero!" });
     }
 
-    if (amount < loan.portion) {
-      currentParcel.status = 2;
-    } else if (amount >= loan.portion) {
-      currentParcel.status = 1;
+    // pega todas as parcelas do empréstimo
+    const parcels = loan.parcels;
+
+    // obtém a parcela atual e as parcelas seguintes
+    let currentParcel = parcels.find((parcel) => parcel.current);
+    let nextParcels = parcels.filter((parcel) => parcel.id > currentParcel.id);
+
+    // calcula os atributos da parcela atual, após pagamento
+    currentParcel.paidValue = amount;
+    currentParcel.status = amount >= loan.portion ? 1 : 2;
+    currentParcel.current = false;
+    await currentParcel.save();
+
+    for (let i = 0; i < nextParcels.length; i++) {
+      if (i === 0) {
+        nextParcels[i].current = true;
+        await nextParcels[i].save;
+      }
     }
 
-    currentParcel.current = false;
-    currentParcel.paidValue = amount;
-
-    // // console.log(currentPortion);
-    currentParcel.save();
-
-    return res.json(currentParcel);
+    return res.json(parcels);
   }
 }
 
