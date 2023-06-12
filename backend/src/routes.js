@@ -25,6 +25,5 @@ routes.put("/emprestimos", LoanController.toPay);
 
 // parcel routes
 routes.get("/parcelas", ParcelController.findAll);
-routes.post("/parcelas", ParcelController.create);
 
 export { routes };

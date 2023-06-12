@@ -6,6 +6,14 @@ import Parcel from "../models/Parcel.js";
 import { addMonths } from "date-fns";
 
 class LoanController {
+  static async findAll(req, res) {
+    const loans = await Loan.findAll({
+      include: Parcel,
+      order: [["id", "ASC"]],
+    });
+    return res.json(loans);
+  }
+
   static async create(req, res) {
     // recebe os dados do frontend
     const { clientId, portion } = req.body;
@@ -71,14 +79,6 @@ class LoanController {
     return res.status(201).json(loan);
   }
 
-  static async findAll(req, res) {
-    const loans = await Loan.findAll({
-      include: Parcel,
-      order: [["id", "ASC"]],
-    });
-    return res.json(loans);
-  }
-
   static async toPay(req, res) {
     const { loanId, amount } = req.body;
 
@@ -115,6 +115,7 @@ class LoanController {
 
     // calcula os atributos da parcela atual, após pagamento
     currentParcel.paidValue = amount;
+    currentParcel.remainderValue = currentParcel.previousValue * 1.1 - amount; // previousValue + 10%
     currentParcel.status = amount >= loan.portion ? 1 : 2;
     currentParcel.current = false;
     await currentParcel.save();
@@ -122,11 +123,20 @@ class LoanController {
     for (let i = 0; i < nextParcels.length; i++) {
       if (i === 0) {
         nextParcels[i].current = true;
-        await nextParcels[i].save;
+        nextParcels[i].previousValue = currentParcel.remainderValue;
+        nextParcels[i].remainderValue =
+          nextParcels[i].previousValue * 1.1 - loan.portion;
+      } else {
+        nextParcels[i].previousValue = nextParcels[i - 1].remainderValue;
+        nextParcels[i].remainderValue =
+          nextParcels[i].previousValue * 1.1 - loan.portion;
       }
+
+      await nextParcels[i].save();
     }
 
     return res.json(parcels);
+    // return res.json(nextParcels);
   }
 }
 
