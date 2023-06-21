@@ -82,12 +82,6 @@ class LoanController {
   static async toPay(req, res) {
     const { loanId, amount } = req.body;
 
-    if (!loanId || !amount) {
-      return res
-        .status(422)
-        .json({ message: "Valor a ser pago é obrigatório!" });
-    }
-
     const loan = await Loan.findByPk(loanId, {
       // include: { all: true, nested: true },
       include: Parcel,
@@ -99,11 +93,12 @@ class LoanController {
       return res.status(404).json({ message: "Empréstimo não encontrado!" });
     }
 
-    // não aceita o valor zero ou negativo como pagamento
-    if (amount <= 0) {
-      return res
-        .status(422)
-        .json({ message: "O valor pago não pode ser menor/igual que zero!" });
+    // valida o valor a ser pago
+    if (!amount || amount <= 0) {
+      return res.status(422).json({
+        message:
+          "Valor a ser pago é obrigatório e não pode ser menor/igual a zero!",
+      });
     }
 
     // pega todas as parcelas do empréstimo
@@ -113,30 +108,34 @@ class LoanController {
     let currentParcel = parcels.find((parcel) => parcel.current);
     let nextParcels = parcels.filter((parcel) => parcel.id > currentParcel.id);
 
+    // calcula quantidade de parcelas pagas, a partir do valor pago
+    const numberOfPaidParcels =
+      amount > loan.portion ? Math.trunc(amount / loan.portion) : 1;
+    console.log(numberOfPaidParcels);
+
     // calcula os atributos da parcela atual, após pagamento
-    currentParcel.paidValue = amount;
-    currentParcel.remainderValue = currentParcel.previousValue * 1.1 - amount; // previousValue + 10%
-    currentParcel.status = amount >= loan.portion ? 1 : 2;
-    currentParcel.current = false;
-    await currentParcel.save();
+    // currentParcel.paidValue = amount;
+    // currentParcel.remainderValue = currentParcel.previousValue * 1.1 - amount; // previousValue + 10%
+    // currentParcel.status = amount >= loan.portion ? 1 : 2;
+    // currentParcel.current = false;
+    // await currentParcel.save();
 
-    for (let i = 0; i < nextParcels.length; i++) {
-      if (i === 0) {
-        nextParcels[i].current = true;
-        nextParcels[i].previousValue = currentParcel.remainderValue;
-        nextParcels[i].remainderValue =
-          nextParcels[i].previousValue * 1.1 - loan.portion;
-      } else {
-        nextParcels[i].previousValue = nextParcels[i - 1].remainderValue;
-        nextParcels[i].remainderValue =
-          nextParcels[i].previousValue * 1.1 - loan.portion;
-      }
+    // for (let i = 0; i < nextParcels.length; i++) {
+    //   if (i === 0) {
+    //     nextParcels[i].current = true;
+    //     nextParcels[i].previousValue = currentParcel.remainderValue;
+    //     nextParcels[i].remainderValue =
+    //       nextParcels[i].previousValue * 1.1 - loan.portion;
+    //   } else {
+    //     nextParcels[i].previousValue = nextParcels[i - 1].remainderValue;
+    //     nextParcels[i].remainderValue =
+    //       nextParcels[i].previousValue * 1.1 - loan.portion;
+    //   }
 
-      await nextParcels[i].save();
-    }
+    //   await nextParcels[i].save();
+    // }
 
     return res.json(parcels);
-    // return res.json(nextParcels);
   }
 }
 
